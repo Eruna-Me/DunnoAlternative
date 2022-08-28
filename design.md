@@ -12,8 +12,8 @@ At this point a lot of this document is still open for change, feel free to sugg
 A single player game in which the player assembles a cast of heroes and monsters and uses those to conquer a randomly generated world, 
 filled with AI who try to do the same, with equal tools.
 
-The game will be split between a world map, en a battle map. Conquering the world should take about a few hours for an experienced player (and not longer! Important!).
-Battles should take 5 minutes at most, and a fastforward should be present to massively speed up battles. 
+The game will be split between a world map and a battle map. Conquering the world should take about a few hours for an experienced player (and not longer! Important!).
+Battles should take 5 minutes at most, and a fastforward should be present to speed up battles. 
 
 Most of the important decisions will be made in the world mode, in the form of deciding what heroes and monsters to recruit and where to deploy them.
 Battles will be mostly automatic under AI control, with minimal user input.
@@ -28,7 +28,7 @@ Windows, Linux
 
 ### Stretch goal: 
 
-Android
+Android, web
 
 ## Technical:
 
@@ -36,8 +36,9 @@ It will either be made in C# and SFML or in Rust (probably with Bevy?)
 Both battles and the world will be 2d and grid based. Troops in battles will use static (unanimated) 2d sprites. 
 Instead of animations particle effects, and sprite movements will be used to make the battlefield look somewhat alive.
 
-A decision will not be made whether the resolution will be static, and the whole world/battle will be visible at times. 
-Or to add scrolling, zooming, resolution options.
+There will be scrolling, zooming, resolution options.
+
+It will be possible to save in the world mode. And the game will autosave (unless disabled) at the start and end of every player turn.
 
 ## Game loop:
 
@@ -60,7 +61,7 @@ Both players can send at most 3 heroes (1 for each flank; left, right, center). 
 Turn based, turns (and battles) will take place sequentially. 
 At the start of a turn the player gets a limited amount of resources to spend during their turn: 
 - Money from their provinces, this is the only resource that carries over to following turns.
-- A limited amount of actions/attacks. (maybe 2), might also get used for construction.
+- A limited amount of actions/attacks. (maybe 2), might also get used for construction. Alternatively a player may only attack the same province once per turn.
 - Every hero (and their attached monsters) may fight once per turn (and only defend during other players turns if they didn't attack!).
 
 With these resources they have to each turn, if so desired:
@@ -69,6 +70,12 @@ With these resources they have to each turn, if so desired:
 - Hire new (wandering?) heroes
 - Buy new monster cards
 - Levelup/upgrade monsters/heroes? (if leveling gets added)
+
+Each province will need to be succesfully attacked twice to be defeated. The second spot might contain a castle.
+
+## World Generation
+
+At the start of a new game. A small random world will be generated with various tiles. Some like water and mountains etc, will not be conquerable. All other tiles will be connected to eachother (no player alone on an unreachable island :D). After this a tile will be picked for the player depending on difficulty and the rest will be filled by AI players. (or maybe some will be special 'rebel' factions which won't partake in offensive actions themselves.)
 
 ## Monster (recruitment)
 
