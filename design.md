@@ -32,9 +32,8 @@ Android, web
 
 ## Technical:
 
-It will either be made in C# and SFML or in Rust (probably with Bevy?)
-Both battles and the world will be 2d and grid based. Troops in battles will use static (unanimated) 2d sprites. 
-Instead of animations particle effects, and sprite movements will be used to make the battlefield look somewhat alive.
+It will be made in Rust with Macroquad.
+Both battles and the world will be 2d and grid based. Troops in battles will use 2d sprites with basic animations. 
 
 There will be scrolling, zooming, resolution options.
 
@@ -61,29 +60,31 @@ Both players can send at most 3 heroes (1 for each flank; left, right, center). 
 Turn based, turns (and battles) will take place sequentially. 
 At the start of a turn the player gets a limited amount of resources to spend during their turn: 
 - Money from their provinces, this is the only resource that carries over to following turns.
-- A limited amount of actions/attacks. (maybe 2), might also get used for construction. Alternatively a player may only attack the same province once per turn.
+- A limited amount of actions/attacks. (maybe 2), might also get used for construction. A player may also only attack the same province once per turn.
 - Every hero (and their attached monsters) may fight once per turn (and only defend during other players turns if they didn't attack!).
 
 With these resources they have to each turn, if so desired:
 - Invade other factions territories.
 - Build province upgrades: either economic upgrades, or (better) castles 
 - Hire new (wandering?) heroes
-- Buy new monster cards
+- Buy new monster squads
 - Levelup/upgrade monsters/heroes? (if leveling gets added)
 
-Each province will need to be succesfully attacked twice to be defeated. The second spot might contain a castle.
+Each province will need to be succesfully attacked twice to be defeated. The second spot might contain a castle providing some sort of defensive buff. AI vs AI battles will use the usual battle mode, but ran on super speed. So the time waiting for the AIs to destroy eachother each turn doesn't exceed a dozen or so seconds. If this turns out impossible, a simplified battle system needs te be developed that is faster. Or worse a battle resolve algoritm.
 
 ## World Generation
 
-At the start of a new game. A small random world will be generated with various tiles. Some like water and mountains etc, will not be conquerable. All other tiles will be connected to eachother (no player alone on an unreachable island :D). After this a tile will be picked for the player depending on difficulty and the rest will be filled by AI players. (or maybe some will be special 'rebel' factions which won't partake in offensive actions themselves.)
+At the start of a new game. A small random world will be generated with various tiles. Some like water and mountains etc, will not be conquerable. All other tiles will be connected to eachother (no player alone on an unreachable island :D). After this a tile will be picked for the player depending on difficulty and the rest will be filled by AI players. (some will be special 'rebel' factions which won't partake in offensive actions themselves.)
+
+A world will have around 50 tiles, and 10-20 proper players. (or whatever number delivers the desired duration until world conquest. (or victory condition)) 
 
 ## Monster (recruitment)
 
-Despite the name these may also just be human troops. They are organized in cards with a select amount of a certain monster.
+Despite the name these may also just be human troops. They are organized in squads with a select amount of a certain monster.
 
-Buying monster cards costs money depending on the card. Only a limited amount of the same card may be bought, sometimes only 1 sometimes a couple (maybe 3 or 5).
+Buying monster squads costs money depending on the monster. Only a limited amount of squads the same monster may be bought, sometimes only 1 sometimes a couple (maybe 3 or 5).
 
-Cards are found in thematic decks (example: human deck, slime deck, undead deck). 
+Monsters are found in thematic decks (example: human deck, slime deck, undead deck). 
 Monster cards will be assigned different ranks (typically stronger units at higher ranks). To be allowed to recruit monster cards from a certain rank of a deck you must first buy X cards of the previous rank.
 
 # Battle:
