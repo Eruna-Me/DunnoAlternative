@@ -1,4 +1,5 @@
 ﻿using DunnoAlternative.State;
+using DunnoAlternative.World;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -17,16 +18,17 @@ namespace DunnoAlternative
 
         private static void Main()
         {
-            var videoMode = new VideoMode(1920, 1080);
+            var videoMode = new VideoMode(800, 600);
             var clock = new Clock();
-
+            
             var deltaLogic = clock.ElapsedTime;
 
             var window = new RenderWindow(videoMode, "DunnoAlternative");
             window.Closed += CloseWindow;
+            window.Resized += ResizeWindow;
             window.SetFramerateLimit(FPS);
 
-            var statehandler = new StateHandler(new BattleState());
+            var statehandler = new StateHandler(new WorldState());
 
             while (window.IsOpen)
             {
@@ -41,11 +43,10 @@ namespace DunnoAlternative
                     deltaLogic -= Time.FromSeconds(1.0f / LOGIC_UPDATES_PER_SECOND);
                 }
 
-                statehandler.Draw();
+                statehandler.Draw(window);
 
                 window.Display();
                 window.Clear();
-
             }
         }
         private static void CloseWindow(object? sender, EventArgs e)
@@ -53,6 +54,19 @@ namespace DunnoAlternative
             if (sender is not null)
             {
                 (sender as RenderWindow)!.Close();
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(sender));
+            }
+        }
+        private static void ResizeWindow(object? sender, EventArgs e)
+        {
+            if (sender is not null)
+            {
+                var window = (sender as RenderWindow)!;
+
+                window.SetView(new View(new FloatRect(0,0,window.Size.X,window.Size.Y)));
             }
             else
             {

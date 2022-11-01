@@ -1,8 +1,10 @@
-﻿namespace DunnoAlternative.State
+﻿using DunnoAlternative.Shared;
+using SFML.Graphics;
+
+namespace DunnoAlternative.State
 {
-	public interface IState
+	public interface IState : IDrawable
 	{
-		public void Draw();
 		public void Update();
 	}
 }

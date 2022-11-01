@@ -1,4 +1,6 @@
-﻿namespace DunnoAlternative.State
+﻿using SFML.Graphics;
+
+namespace DunnoAlternative.State
 {
     public class StateHandler
 	{
@@ -16,6 +18,6 @@
 
 		public void Update() => currentState.Update();
 
-		public void Draw() => currentState.Draw();
+		public void Draw(RenderWindow window) => currentState.Draw(window);
 	}
 }
