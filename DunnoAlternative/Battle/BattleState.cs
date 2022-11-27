@@ -15,7 +15,7 @@ namespace DunnoAlternative.Battle
             throw new NotImplementedException();
         }
 
-        public void Update()
+        public void Update(RenderWindow window)
         {
         }
     }

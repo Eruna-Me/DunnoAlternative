@@ -16,7 +16,7 @@ namespace DunnoAlternative.State
 			currentState = state;
 		}
 
-		public void Update() => currentState.Update();
+		public void Update(RenderWindow window) => currentState.Update(window);
 
 		public void Draw(RenderWindow window) => currentState.Draw(window);
 	}

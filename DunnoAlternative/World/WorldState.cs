@@ -21,6 +21,9 @@ namespace DunnoAlternative.World
         private readonly View uiView;
         private readonly WindowManager windowManager;
         private readonly InputManager inputManager;
+        private int currentPlayerIndex = 0;
+        private Player currentPlayer;
+        private readonly Control currentPlayerIndicator;
 
         public WorldState(RenderWindow window)
         {
@@ -38,18 +41,24 @@ namespace DunnoAlternative.World
             mainView = new View(new FloatRect(0, 0, window.Size.X, window.Size.Y));
             uiView = new View();
 
+            currentPlayer = players[currentPlayerIndex];
+
+            currentPlayerIndicator = new Grid
+            {
+                Background = currentPlayer.Color,
+                BorderColor = Color.Black,
+                BorderThickness = 3,
+                TrueHeight = 100,
+                TrueWidth = 300,
+                PosX = 200,
+                PosY = 20,
+            };
+
+            currentPlayerIndicator.ClickEvent += EndTurn;
+
             var demoUI = new Window
             {
-                Child = new Grid
-                {
-                    Background = Color.Red,
-                    BorderColor = Color.Green,
-                    BorderThickness = 3,
-                    TrueHeight = 100,
-                    TrueWidth = 300,
-                    PosX = 200,
-                    PosY = 20,
-                }
+                Child = currentPlayerIndicator
             };
 
             inputManager = new InputManager();
@@ -69,8 +78,25 @@ namespace DunnoAlternative.World
             windowManager.OnDraw(window);
         }
 
-        public void Update()
+        private void EndTurn()
         {
+            currentPlayerIndex++;
+            if(currentPlayerIndex >= players.Count)
+            {
+                currentPlayerIndex = 0;
+            }
+
+            currentPlayer = players[currentPlayerIndex];
+            currentPlayerIndicator.Background = currentPlayer.Color;
+            //currentplayer.turnstart
+
+            if(currentPlayer.Type == PlayerType.passive) EndTurn();
+        }
+
+        public void Update(RenderWindow window)
+        {
+            inputManager.Update(window);
+            windowManager.Update();
         }
     }
 }

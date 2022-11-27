@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
@@ -45,12 +46,12 @@ namespace ErunaInput
             }
         }
 
-        public void Update()
+        public void Update(RenderWindow window)
         {
             UpdateKeyboardState();
-            UpdateMouseState();
+            UpdateMouseState(window);
         }
-        public void SetHandled(Enum device)
+        public static void SetHandled(Enum device)
         {
             switch (device)
             {
@@ -76,9 +77,9 @@ namespace ErunaInput
             }
         }
 
-        private void UpdateMouseState()
+        private void UpdateMouseState(RenderWindow window)
         {
-            MousePos = Mouse.GetPosition();
+            MousePos = Mouse.GetPosition(window);
 
             ScrollWheelValue = Mouse.Wheel.VerticalWheel; 
             HorizontalWheelValue = Mouse.Wheel.HorizontalWheel;
@@ -89,7 +90,7 @@ namespace ErunaInput
             }
         }
 
-        private ButtonState UpdateKeystate(ButtonState buttonState, bool keyPressed)
+        private static ButtonState UpdateKeystate(ButtonState buttonState, bool keyPressed)
         {
             if (keyPressed)
             {

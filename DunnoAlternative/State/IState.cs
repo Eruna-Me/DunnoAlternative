@@ -5,6 +5,6 @@ namespace DunnoAlternative.State
 {
 	public interface IState : IDrawable
 	{
-		public void Update();
+		public void Update(RenderWindow window);
 	}
 }

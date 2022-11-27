@@ -39,7 +39,7 @@ namespace DunnoAlternative
 
                 while (deltaLogic.AsSeconds() > 1.0f / LOGIC_UPDATES_PER_SECOND)
                 {
-                    statehandler.Update();
+                    statehandler.Update(window);
                     deltaLogic -= Time.FromSeconds(1.0f / LOGIC_UPDATES_PER_SECOND);
                 }
 
