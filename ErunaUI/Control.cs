@@ -22,7 +22,7 @@ namespace ErunaUI
         public Control? Parent { get; }
         public Color? Background { get; set; }
 
-        //public event Action ClickEvent;
+        public event Action? ClickEvent;
 
         public virtual void OnDraw(RenderWindow window)
         {
@@ -48,25 +48,25 @@ namespace ErunaUI
             }
         }
 
-        //public bool IsMouseOver(Point mousePos)
-        //{
-        //    return (mousePos.X >= PosX
-        //        && mousePos.X <= PosX + TrueWidth
-        //        && mousePos.Y >= PosY
-        //        && mousePos.Y <= PosY + TrueHeight);
-        //}
+        public bool IsMouseOver(Vector2i mousePos)
+        {
+            return (mousePos.X >= PosX
+                && mousePos.X <= PosX + TrueWidth
+                && mousePos.Y >= PosY
+                && mousePos.Y <= PosY + TrueHeight);
+        }
 
-        //public virtual bool OnClick(Point mousePos)
-        //{
-        //    if (IsMouseOver(mousePos) && ClickEvent != null)
-        //    {
-        //        ClickEvent();
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+        public virtual bool OnClick(Vector2i mousePos)
+        {
+            if (IsMouseOver(mousePos) && ClickEvent != null)
+            {
+                ClickEvent();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

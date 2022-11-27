@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 
 namespace ErunaUI
 {
@@ -8,8 +9,8 @@ namespace ErunaUI
 
         public void OnDraw(RenderWindow window);
 
-        //public bool OnClick(Point inputManager);
+        public bool OnClick(Vector2i inputManager);
 
-        //public bool IsMouseOver(Point mousePos);
+        public bool IsMouseOver(Vector2i mousePos);
     }
 }

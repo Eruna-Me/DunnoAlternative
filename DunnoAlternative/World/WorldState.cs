@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DunnoAlternative.Shared;
 using DunnoAlternative.State;
+using ErunaInput;
 using ErunaUI;
 using SFML.Graphics;
 using SFML.System;
@@ -19,6 +20,7 @@ namespace DunnoAlternative.World
         private readonly View mainView;
         private readonly View uiView;
         private readonly WindowManager windowManager;
+        private readonly InputManager inputManager;
 
         public WorldState(RenderWindow window)
         {
@@ -50,7 +52,9 @@ namespace DunnoAlternative.World
                 }
             };
 
-            windowManager = new WindowManager();
+            inputManager = new InputManager();
+
+            windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
         }
 

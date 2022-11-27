@@ -1,4 +1,6 @@
-﻿using SFML.Graphics;
+﻿using ErunaInput;
+using SFML.Graphics;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +11,12 @@ namespace ErunaUI
     {
         private List<IWindow> windows;
         public IReadOnlyList<IWindow> Windows => windows; 
-        //public InputManager InputManager { get; set; }
+        public InputManager InputManager { get; set; }
 
-        public WindowManager()
+        public WindowManager(InputManager inputManager)
         {
             windows = new List<IWindow>();
-            //InputManager = inputManager;
+            InputManager = inputManager;
         }
         public void OnDraw(RenderWindow renderWindow)
         {
@@ -26,14 +28,14 @@ namespace ErunaUI
 
         public void Update()
         {
-            //if (InputManager.MouseButtonState[MouseButton.Left].buttonState == ButtonState.Release)
-            //{
-            //    foreach (IWindow window in Windows.Reverse())
-            //    {
-            //        if (window.OnClick(InputManager.MousePos)) InputManager.SetHandled(MouseButton.Left);
-            //        if (window.IsMouseOver(InputManager.MousePos)) break;
-            //    }
-            //}
+            if (InputManager.MouseButtonState[Mouse.Button.Left].buttonState == ButtonState.Release)
+            {
+                foreach (IWindow window in Windows.Reverse())
+                {
+                    if (window.OnClick(InputManager.MousePos)) InputManager.SetHandled(Mouse.Button.Left);
+                    if (window.IsMouseOver(InputManager.MousePos)) break;
+                }
+            }
         }
 
         public void AddWindow(IWindow window)

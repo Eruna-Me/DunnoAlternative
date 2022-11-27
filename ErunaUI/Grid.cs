@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -136,16 +137,16 @@ namespace ErunaUI
             return (rows.Where(x => x.IsRelative).Sum(x => x.Size));
         }
 
-        //public override bool OnClick(Point mousePos)
-        //{
-        //    foreach(var child in Children)
-        //    {
-        //        if (child.Control.OnClick(mousePos))
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return base.OnClick(mousePos);
-        //}
+        public override bool OnClick(Vector2i mousePos)
+        {
+            foreach(var child in Children)
+            {
+                if (child.Control.OnClick(mousePos))
+                {
+                    return true;
+                }
+            }
+            return base.OnClick(mousePos);
+        }
     }
 }

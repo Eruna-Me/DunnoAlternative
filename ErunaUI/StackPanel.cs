@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 using System.Collections.Generic;
 
 namespace ErunaUI
@@ -53,16 +54,16 @@ namespace ErunaUI
             }
         }
 
-        //public override bool OnClick(Point mousePos)
-        //{
-        //    foreach (var child in Children)
-        //    {
-        //        if (child.OnClick(mousePos))
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return base.OnClick(mousePos);
-        //}
+        public override bool OnClick(Vector2i mousePos)
+        {
+            foreach (var child in Children)
+            {
+                if (child.OnClick(mousePos))
+                {
+                    return true;
+                }
+            }
+            return base.OnClick(mousePos);
+        }
     }
 }
