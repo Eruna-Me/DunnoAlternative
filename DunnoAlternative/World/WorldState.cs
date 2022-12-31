@@ -8,6 +8,7 @@ using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using ErunaInput;
 using ErunaUI;
+using ErunaUI.Text;
 using SFML.Graphics;
 using SFML.System;
 
@@ -43,7 +44,9 @@ namespace DunnoAlternative.World
 
             currentPlayer = players[currentPlayerIndex];
 
-            currentPlayerIndicator = new Grid
+            var font = new Font("Content/Fonts/KosugiMaru-Regular.ttf");
+
+            currentPlayerIndicator = new TextLabel(font)
             {
                 Background = currentPlayer.Color,
                 BorderColor = Color.Black,
@@ -52,6 +55,7 @@ namespace DunnoAlternative.World
                 TrueWidth = 300,
                 PosX = 200,
                 PosY = 20,
+                TextString = "End Turn",
             };
 
             currentPlayerIndicator.ClickEvent += EndTurn;
