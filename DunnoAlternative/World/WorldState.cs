@@ -11,6 +11,7 @@ using ErunaUI;
 using ErunaUI.Text;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 
 namespace DunnoAlternative.World
 {
@@ -26,8 +27,18 @@ namespace DunnoAlternative.World
         private Player currentPlayer;
         private readonly Control currentPlayerIndicator;
 
+        private ErunaUI.Window? buildWindow;
+        private ErunaUI.Window? invasionWindow;
+
+        const int POPUP_WINDOW_WIDTH = 250;
+        const int POPUP_BUTTON_HEIGHT = 80;
+
+        private readonly Font font = new("Content/Fonts/KosugiMaru-Regular.ttf");
+
         public WorldState(RenderWindow window)
         {
+            inputManager = new InputManager();
+
             players = new List<Player> {
                 new Player(PlayerType.human, "Humanland", Color.Blue),
                 new Player(PlayerType.CPU, "Robofactory", Color.Red),
@@ -36,15 +47,13 @@ namespace DunnoAlternative.World
             };
 
             tiles = new Tile[,] {
-                { new Tile("First Tile", players[0], new Vector2f(0,0)), new Tile("Second Tile", players[1], new Vector2f(64,0)), },
-                { new Tile("Other Tile", players[2], new Vector2f(0,64)), new Tile("Rebel Mountain", players[3], new Vector2f(64,64)), },
+                { new Tile("First Tile", players[0], new Vector2f(0,0)), new Tile("Second Tile", players[1], new Vector2f(0,64)), },
+                { new Tile("Other Tile", players[2], new Vector2f(64,0)), new Tile("Rebel Mountain", players[3], new Vector2f(64,64)), },
             };
             mainView = new View(new FloatRect(0, 0, window.Size.X, window.Size.Y));
             uiView = new View();
 
             currentPlayer = players[currentPlayerIndex];
-
-            var font = new Font("Content/Fonts/KosugiMaru-Regular.ttf");
 
             currentPlayerIndicator = new TextLabel(font)
             {
@@ -60,12 +69,10 @@ namespace DunnoAlternative.World
 
             currentPlayerIndicator.ClickEvent += EndTurn;
 
-            var demoUI = new Window
+            var demoUI = new ErunaUI.Window
             {
                 Child = currentPlayerIndicator
             };
-
-            inputManager = new InputManager();
 
             windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
@@ -78,12 +85,14 @@ namespace DunnoAlternative.World
             {
                 tile.Draw(window);
             }
-            window.SetView(uiView);
+            //window.SetView(uiView); figure out view mouse sync stuff
             windowManager.OnDraw(window);
         }
 
         private void EndTurn()
         {
+            ClosePopupWindows();
+
             currentPlayerIndex++;
             if(currentPlayerIndex >= players.Count)
             {
@@ -101,6 +110,93 @@ namespace DunnoAlternative.World
         {
             inputManager.Update(window);
             windowManager.Update();
+
+            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false))
+            {
+                ClosePopupWindows();
+
+                var tileIndex = MousePosToTile(inputManager.MousePos);
+                if (TileExists(tileIndex))
+                {
+                    if (tiles[tileIndex.X, tileIndex.Y].Owner == currentPlayer)
+                    {
+                        var buttons = new List<(string, Action)>
+                        {
+                            ("Upgrade Castle", ()=>{ }),
+                            ("Test", ()=>{ }),
+                            ("Dunno", ()=>{ }),
+                        };
+
+                        buildWindow = CreatePopupWindow(inputManager.MousePos, buttons);
+                        windowManager.AddWindow(buildWindow);
+                    }
+                    else
+                    {
+                        tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer);
+                        // else if neighbour tile = current player attack window
+                    }
+                }
+            }
+        }
+
+        private void ClosePopupWindows()
+        {
+            CloseWindow(buildWindow);
+            CloseWindow(invasionWindow);
+        }
+
+        private void CloseWindow(ErunaUI.Window? window)
+        {
+            if (window != null)
+            {
+                windowManager.RemoveWindow(window);
+                //window = null;
+            }
+        }
+
+        private static Vector2i MousePosToTile(Vector2i mousepos)
+        {
+            Vector2i index = new(mousepos.X / (int)Tile.Size.X, mousepos.Y / (int)Tile.Size.Y);
+
+            return index;
+        }
+
+        private bool TileExists(Vector2i index)
+        {
+            return index.X >= 0 && index.Y >= 0 && index.X <= tiles.GetUpperBound(0) && index.Y <= tiles.GetUpperBound(1);
+        }
+
+        private ErunaUI.Window CreatePopupWindow(Vector2i position, List<(string, Action)> buttons)
+        {
+            var stackPanel = new StackPanel
+            {
+                 PosX = position.X, PosY = position.Y, TrueWidth = POPUP_WINDOW_WIDTH, TrueHeight = POPUP_BUTTON_HEIGHT * buttons.Count, Background = Color.Blue 
+            };
+
+            foreach(var (text, action) in buttons)
+            {
+                var button = new TextLabel(font)
+                {
+                    Color = Color.White,
+                    TextString = text,
+                    TextAlign = TextAlign.Center,
+                    TextGravity = TextGravity.Center,
+                    Height = POPUP_BUTTON_HEIGHT,
+                    Background = Color.Blue,
+                    Margin = 2
+                };
+                button.ClickEvent += action;
+                stackPanel.Children.Add(button);
+            }
+
+            var window = new ErunaUI.Window
+            {
+                Child = stackPanel,
+            };
+
+            window.UpdateSizes();
+
+            return window;
         }
     }
 }

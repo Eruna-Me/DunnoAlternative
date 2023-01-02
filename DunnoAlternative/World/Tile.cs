@@ -1,4 +1,5 @@
 ﻿using DunnoAlternative.Shared;
+using ErunaInput;
 using SFML.Graphics;
 using SFML.System;
 using System;
@@ -11,11 +12,12 @@ namespace DunnoAlternative.World
 {
     internal class Tile : IDrawable
     {
-        private static readonly Vector2f tileSize = new(64.0f,64.0f);
+        public static readonly Vector2f Size = new(64.0f,64.0f);
         public Player Owner { get; set; }
         public string Name { get; set; }
 
         private readonly RectangleShape shape;
+
         //terrain type
         //buildings
         //Water/other special impassible tiles?
@@ -24,16 +26,30 @@ namespace DunnoAlternative.World
         {
             Owner = owner;
             Name = name;
-            shape = new RectangleShape(tileSize)
+            shape = new RectangleShape(Size)
             {
                 Position = position,
-                FillColor = owner.Color,
             };
+
+            ChangeOwner(owner);
+        }
+
+        public void ChangeOwner(Player newOwner)
+        {
+            Owner = newOwner;
+            shape.FillColor = newOwner.Color;
         }
 
         public void Draw(RenderWindow window)
         {
             window.Draw(shape);
+        }
+        public bool IsMouseOver(Vector2i mousePos)
+        {
+            return mousePos.X >= shape.Position.X
+                && mousePos.X <= shape.Position.X + Size.Y
+                && mousePos.Y >= shape.Position.Y
+                && mousePos.Y <= shape.Position.Y + Size.Y;
         }
     }
 }

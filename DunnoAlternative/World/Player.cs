@@ -25,6 +25,7 @@ namespace DunnoAlternative.World
         }
         
         //Heroes
-        //Monsters
+        //Squads
+        //Money
     }
 }
