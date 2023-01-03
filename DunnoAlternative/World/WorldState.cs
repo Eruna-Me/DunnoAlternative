@@ -43,7 +43,7 @@ namespace DunnoAlternative.World
                 new Player(PlayerType.human, "Humanland", Color.Blue),
                 new Player(PlayerType.CPU, "Robofactory", Color.Red),
                 new Player(PlayerType.CPU, "Bob5", Color.Magenta),
-                new Player(PlayerType.passive, "Rebels", Color.Yellow), 
+                new Player(PlayerType.passive, "Rebels", Color.Yellow),
             };
 
             tiles = new Tile[,] {
@@ -94,7 +94,7 @@ namespace DunnoAlternative.World
             ClosePopupWindows();
 
             currentPlayerIndex++;
-            if(currentPlayerIndex >= players.Count)
+            if (currentPlayerIndex >= players.Count)
             {
                 currentPlayerIndex = 0;
             }
@@ -103,7 +103,7 @@ namespace DunnoAlternative.World
             currentPlayerIndicator.Background = currentPlayer.Color;
             //currentplayer.turnstart
 
-            if(currentPlayer.Type == PlayerType.passive) EndTurn();
+            if (currentPlayer.Type == PlayerType.passive) EndTurn();
         }
 
         public void Update(RenderWindow window)
@@ -132,8 +132,16 @@ namespace DunnoAlternative.World
                     }
                     else
                     {
-                        tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer);
-                        // else if neighbour tile = current player attack window
+                        if (CheckNeighbors(tileIndex))
+                        {
+                            var buttons = new List<(string, Action)>
+                            {
+                                ("Invade", ()=>{ tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer); }),
+                            };
+
+                            invasionWindow = CreatePopupWindow(inputManager.MousePos, buttons);
+                            windowManager.AddWindow(invasionWindow);
+                        }
                     }
                 }
             }
@@ -166,14 +174,39 @@ namespace DunnoAlternative.World
             return index.X >= 0 && index.Y >= 0 && index.X <= tiles.GetUpperBound(0) && index.Y <= tiles.GetUpperBound(1);
         }
 
+        private bool CheckNeighbors(Vector2i index)
+        {
+            List<Vector2i> directions = new() {
+                new Vector2i(0, 1),
+                new Vector2i(0, -1),
+                new Vector2i(1,0),
+                new Vector2i(-1, 0),
+            };
+
+            foreach (var direction in directions)
+            {
+                var checkPos = direction + index;
+
+                if (!TileExists(checkPos)) continue;
+
+                if (tiles[checkPos.X, checkPos.Y].Owner == currentPlayer) return true;
+            }
+
+            return false;
+        }
+
         private ErunaUI.Window CreatePopupWindow(Vector2i position, List<(string, Action)> buttons)
         {
             var stackPanel = new StackPanel
             {
-                 PosX = position.X, PosY = position.Y, TrueWidth = POPUP_WINDOW_WIDTH, TrueHeight = POPUP_BUTTON_HEIGHT * buttons.Count, Background = Color.Blue 
+                PosX = position.X,
+                PosY = position.Y,
+                TrueWidth = POPUP_WINDOW_WIDTH,
+                TrueHeight = POPUP_BUTTON_HEIGHT * buttons.Count,
+                Background = Color.Blue
             };
 
-            foreach(var (text, action) in buttons)
+            foreach (var (text, action) in buttons)
             {
                 var button = new TextLabel(font)
                 {
