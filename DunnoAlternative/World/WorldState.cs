@@ -60,19 +60,28 @@ namespace DunnoAlternative.World
                 Background = currentPlayer.Color,
                 BorderColor = Color.Black,
                 BorderThickness = 3,
-                TrueHeight = 100,
-                TrueWidth = 300,
-                PosX = 200,
-                PosY = 20,
                 TextString = "End Turn",
             };
+
+            var demoGrid = new Grid
+            {
+                Rows = GridRow.GenerateRows(1),
+                Columns = GridRow.GenerateRows(2),
+                TrueHeight = 100,
+                TrueWidth = 800,
+                PosX = 0,
+                PosY = 500,
+            };
+
+            demoGrid.Children.Add(new Cell(currentPlayerIndicator, new List<int> { 1 }, new List<int> { 0 }));
 
             currentPlayerIndicator.ClickEvent += EndTurn;
 
             var demoUI = new ErunaUI.Window
             {
-                Child = currentPlayerIndicator
+                Child = demoGrid
             };
+            demoUI.UpdateSizes();
 
             windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
