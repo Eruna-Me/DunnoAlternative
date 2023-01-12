@@ -29,11 +29,14 @@ namespace DunnoAlternative.World
 
         private ErunaUI.Window? buildWindow;
         private ErunaUI.Window? invasionWindow;
+        private ErunaUI.Window? squadRecruitWindow;
 
         const int POPUP_WINDOW_WIDTH = 250;
         const int POPUP_BUTTON_HEIGHT = 80;
 
         private readonly Font font = new("Content/Fonts/KosugiMaru-Regular.ttf");
+
+        private List<SquadType> squadTypes;
 
         public WorldState(RenderWindow window)
         {
@@ -63,6 +66,14 @@ namespace DunnoAlternative.World
                 TextString = "End Turn",
             };
 
+            var btnRecruitSquad = new TextLabel(font)
+            {
+                Background = Color.Blue,
+                BorderColor = Color.Black,
+                BorderThickness = 3,
+                TextString = "Recruit Squads",
+            };
+
             var demoGrid = new Grid
             {
                 Rows = GridRow.GenerateRows(1),
@@ -74,7 +85,9 @@ namespace DunnoAlternative.World
             };
 
             demoGrid.Children.Add(new Cell(currentPlayerIndicator, new List<int> { 1 }, new List<int> { 0 }));
+            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0}));
 
+            btnRecruitSquad.ClickEvent += CreateSquadRecruitWindow;
             currentPlayerIndicator.ClickEvent += EndTurn;
 
             var demoUI = new ErunaUI.Window
@@ -85,6 +98,28 @@ namespace DunnoAlternative.World
 
             windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
+
+            squadTypes = new List<SquadType>();
+            squadTypes.Add(new SquadType
+            {
+                DefaultName = "The Last Samurais",
+                TypeName = "Samurai"
+            });
+        }
+
+        private void CreateSquadRecruitWindow()
+        {
+            var buttons = new List<(string, Action)>();
+
+            foreach(var type in squadTypes)
+            {
+                buttons.Add((type.TypeName, () => { 
+                    currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type)); 
+                }));
+            }
+
+            squadRecruitWindow = CreatePopupWindow(new Vector2i(100,100), buttons);
+            windowManager.AddWindow(squadRecruitWindow);
         }
 
         public void Draw(RenderWindow window)
@@ -160,6 +195,7 @@ namespace DunnoAlternative.World
         {
             CloseWindow(buildWindow);
             CloseWindow(invasionWindow);
+            CloseWindow(squadRecruitWindow);
         }
 
         private void CloseWindow(ErunaUI.Window? window)
