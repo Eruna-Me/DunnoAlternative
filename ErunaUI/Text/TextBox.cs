@@ -1,0 +1,51 @@
+﻿//using Microsoft.Xna.Framework.Graphics;
+//using Microsoft.Xna.Framework.Input;
+//using System;
+//using System.Collections.Generic;
+//using System.Text;
+
+//namespace ErunaUI.Text
+//{
+//    class TextBox : TextBlock
+//    {
+//        public int SelectionIndex { get; set; } = 0;
+
+//        public TextBox(SpriteFont spritefont) : base(spritefont)
+//        {
+//        }
+
+//        public void EnterKey(Keys key)
+//        {
+//            switch(key)
+//            {
+//                case Keys.Back:
+//                    if (SelectionIndex > 1) TextString = TextString.Remove(SelectionIndex - 1,1);
+//                    return;
+
+//                case Keys.Enter:
+//                    TextString.Insert(SelectionIndex, "\n");
+//                    SelectionIndex++;
+//                    return;
+
+//                case Keys.Right:
+//                    MoveHorizontal(1);
+//                    return;
+
+//                case Keys.Left:
+//                    MoveHorizontal(-1);
+//                    return;
+
+//                default:
+//                    TextString.Insert(SelectionIndex, key.ToString());
+//                    break;
+//            }
+//        }
+
+//        private void MoveHorizontal(int direction)
+//        {
+//            var newPos = SelectionIndex + direction;
+//            if (newPos < 0 || newPos > TextString.Length - 1)
+//                SelectionIndex = newPos;
+//        }
+//    }
+//}
