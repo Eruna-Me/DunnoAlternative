@@ -28,7 +28,8 @@ namespace DunnoAlternative
             window.Resized += ResizeWindow;
             window.SetFramerateLimit(FPS);
 
-            var statehandler = new StateHandler(new WorldState(window));
+            var statehandler = new StateManager();
+            statehandler.Push(new WorldState(window));
 
             while (window.IsOpen)
             {
