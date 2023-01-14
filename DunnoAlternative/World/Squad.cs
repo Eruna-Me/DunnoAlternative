@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DunnoAlternative.World
 {
-    internal class Squad
+    public class Squad
     {
         public string Name { get; set; }
         public SquadType Type { get; set; }

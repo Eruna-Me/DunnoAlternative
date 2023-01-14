@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DunnoAlternative.World
 {
-    internal struct SquadType
+    public struct SquadType
     {
         //public Texture Texture { get; set; }
         public string TypeName { get; set; }

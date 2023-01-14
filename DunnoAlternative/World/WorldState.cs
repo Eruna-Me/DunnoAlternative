@@ -30,6 +30,9 @@ namespace DunnoAlternative.World
         private ErunaUI.Window? buildWindow;
         private ErunaUI.Window? invasionWindow;
         private ErunaUI.Window? squadRecruitWindow;
+        private ErunaUI.Window? battleSetupWindow;
+
+        private BattleSetupUI? battleSetupUI;
 
         const int POPUP_WINDOW_WIDTH = 250;
         const int POPUP_BUTTON_HEIGHT = 80;
@@ -85,7 +88,7 @@ namespace DunnoAlternative.World
             };
 
             demoGrid.Children.Add(new Cell(currentPlayerIndicator, new List<int> { 1 }, new List<int> { 0 }));
-            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0}));
+            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0 }));
 
             btnRecruitSquad.ClickEvent += CreateSquadRecruitWindow;
             currentPlayerIndicator.ClickEvent += EndTurn;
@@ -111,14 +114,16 @@ namespace DunnoAlternative.World
         {
             var buttons = new List<(string, Action)>();
 
-            foreach(var type in squadTypes)
+            foreach (var type in squadTypes)
             {
-                buttons.Add((type.TypeName, () => { 
-                    currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type)); 
-                }));
+                buttons.Add((type.TypeName, () =>
+                {
+                    currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type));
+                }
+                ));
             }
 
-            squadRecruitWindow = CreatePopupWindow(new Vector2i(100,100), buttons);
+            squadRecruitWindow = CreatePopupWindow(new Vector2i(100, 100), buttons);
             windowManager.AddWindow(squadRecruitWindow);
         }
 
@@ -154,6 +159,7 @@ namespace DunnoAlternative.World
         {
             inputManager.Update(window);
             windowManager.Update();
+            battleSetupUI?.Update();
 
             if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false))
             {
@@ -178,10 +184,25 @@ namespace DunnoAlternative.World
                     {
                         if (CheckNeighbors(tileIndex))
                         {
+
                             var buttons = new List<(string, Action)>
                             {
-                                ("Invade", ()=>{ tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer); }),
+                                ("InvadeOld", ()=>{ tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer); }),
+                                ("InvadeAdvanced", ()=>{
+                                    ClosePopupWindows();
+
+                                    battleSetupWindow = new ErunaUI.Window();
+                           
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 300, currentPlayer.UnassignedSquads);
+                            
+                                    //battleSetupWindow.Child = battleSetupUI;
+                                                                
+                                    battleSetupWindow.UpdateSizes();
+
+                                    windowManager.AddWindow(battleSetupWindow);
+                                }),
                             };
+
 
                             invasionWindow = CreatePopupWindow(inputManager.MousePos, buttons);
                             windowManager.AddWindow(invasionWindow);
@@ -196,6 +217,7 @@ namespace DunnoAlternative.World
             CloseWindow(buildWindow);
             CloseWindow(invasionWindow);
             CloseWindow(squadRecruitWindow);
+            CloseWindow(battleSetupWindow);
         }
 
         private void CloseWindow(ErunaUI.Window? window)
@@ -242,6 +264,8 @@ namespace DunnoAlternative.World
 
         private ErunaUI.Window CreatePopupWindow(Vector2i position, List<(string, Action)> buttons)
         {
+            ClosePopupWindows();
+
             var stackPanel = new StackPanel
             {
                 PosX = position.X,
