@@ -15,22 +15,28 @@ namespace DunnoAlternative.World
         public readonly Window mainWindow;
         //private readonly WindowManager windowManager;
 
-        private Grid gameGrid;
-        private TextLabel okButton;
+        private readonly Grid gameGrid;
+        private readonly TextLabel okButton;
         //private SelectedCommanderSummary selectedCommanderSummary;
 
         private readonly Squad[,] playerFieldGrid;
         private readonly List<Squad> unassignedSquads;
-        private StackPanel unassignedSquadsStackPanel;
+        private readonly StackPanel unassignedSquadsStackPanel;
 
         public int WindowHeight { private get; set; }
         public int WindowWidth { private get; set; }
 
         private readonly Font font;
         private Squad? selectedSquad;
-        //public event Action<Squad[,]> OnSetupFinished = delegate { };
 
-        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads)
+        const int MAX_FORMATIONS = 3;
+        const int SQUADS_PER_FORMATION = 2;
+
+
+        public event Action<Squad[,]> OnSetupFinished = delegate { };
+        public event Action OnSetupCanceled = delegate { };
+
+        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads, bool isAttacker)
         {
             //this.windowManager = windowManager;
             mainWindow = window;
@@ -42,23 +48,16 @@ namespace DunnoAlternative.World
 
             //windowManager.AddWindow(mainWindow);
 
-            playerFieldGrid = new Squad[2, 3];
+            playerFieldGrid = new Squad[SQUADS_PER_FORMATION, MAX_FORMATIONS];
             unassignedSquads = squads;
 
-            InitUi();
-
-            Update();
-        }
-
-        private void InitUi()
-        {
             Grid fieldGrid = new()
             {
                 PosX = 0,
                 PosY = 0,
                 TrueHeight = WindowHeight,
                 TrueWidth = WindowWidth,
-                Columns = GridRow.GenerateRows(2),
+                Columns = GridRow.GenerateRows(3),
                 Rows = GridRow.GenerateRows(3),
             };
 
@@ -66,12 +65,16 @@ namespace DunnoAlternative.World
             fieldGrid.Rows[1].Size = 50;
             fieldGrid.Rows[2].Size = 10;
 
+            fieldGrid.Columns[0].Size = 50;
+            fieldGrid.Columns[1].Size = 25;
+            fieldGrid.Columns[2].Size = 25;
+
             //selectedCommanderSummary = new SelectedCommanderSummary(font);
 
             gameGrid = new Grid
             {
-                //Columns = GridRow.GenerateRows(Globals.fieldWidth / 2),
-                //Rows = GridRow.GenerateRows(Globals.fieldHeight),
+                Columns = GridRow.GenerateRows(SQUADS_PER_FORMATION),
+                Rows = GridRow.GenerateRows(MAX_FORMATIONS),
             };
 
             okButton = new TextLabel(font)
@@ -82,7 +85,17 @@ namespace DunnoAlternative.World
                 Background = Color.Blue,
                 Color = Color.Black,
             };
+            var cancelButton = new TextLabel(font)
+            {
+                TextString = "Cancel",
+                TextAlign = TextAlign.Center,
+                TextGravity = TextGravity.Center,
+                Background = Color.Blue,
+                Color = Color.Black,
+            };
 
+            cancelButton.ClickEvent += CancelClicked;
+            
             okButton.ClickEvent += OkClicked;
 
             gameGrid.Background = Color.Green;
@@ -94,27 +107,52 @@ namespace DunnoAlternative.World
 
             unassignedSquadsStackPanel.ClickEvent += () => ListClickEvent(null);
 
-            //for (int x = 0; x < Globals.fieldWidth / 2; x++)
-            //{
-            //    for (int y = 0; y < Globals.fieldHeight; y++)
-            //    {
-            //        var commandor = new Square(font);
-            //        int bsX = x;
-            //        int bsY = y;
-            //
-            //        commandor.ClickEvent += () => FieldClickEvent(playerFieldGrid[bsX, bsY], bsX, bsY);
-            //
-            //        gameGrid.Children.Add(new Cell(commandor, x, y));
-            //    }
-            //}
+            for (int x = 0; x < SQUADS_PER_FORMATION; x++)
+            {
+                for (int y = 0; y < MAX_FORMATIONS; y++)
+                {
+                    var commandor = new TextLabel(font)
+                    {
+                        Color = Color.White,
+                        Background = Color.Green
+                    };
+
+                    if (selectedSquad != null)
+                    {
+                        commandor.TextString = selectedSquad.Name;
+                    }
+                    else
+                    {
+                        commandor.TextString = string.Empty;
+                    }
+
+                    int bsX = x;
+                    int bsY = y;
+
+                    commandor.ClickEvent += () => FieldClickEvent(playerFieldGrid[bsX, bsY], bsX, bsY);
+
+                    gameGrid.Children.Add(new Cell(commandor, x, y));
+                }
+            }
 
             fieldGrid.Children.Add(new Cell(gameGrid, 0, 1, 1, 2));
-            fieldGrid.Children.Add(new Cell(unassignedSquadsStackPanel, 1, 0, 1, 2));
-            fieldGrid.Children.Add(new Cell(okButton, 1, 2));
+            fieldGrid.Children.Add(new Cell(unassignedSquadsStackPanel, 1, 0, 2, 2));
+            
+            if(isAttacker)
+            {
+                fieldGrid.Children.Add(new Cell(okButton, 1, 2));
+                fieldGrid.Children.Add(new Cell(cancelButton, 2, 2));
+            }
+            else
+            {
+                fieldGrid.Children.Add(new Cell(okButton, 1, 2, 2, 1));
+            }
             //fieldGrid.Children.Add(new Cell(selectedCommanderSummary, 0, 0));
 
             mainWindow.Child = fieldGrid;
             mainWindow.UpdateSizes();
+
+            Update();
         }
 
         private void FieldClickEvent(Squad squad, int x, int y)
@@ -176,28 +214,30 @@ namespace DunnoAlternative.World
             foreach (var child in gameGrid.Children)
             {
                 var field = playerFieldGrid[child.Columns.First(), child.Rows.First()];
-                var Grid = (Grid)child.Control;
-                var Name = (TextLabel)Grid.Children.Single(x => x.Rows.Single() == 0 && x.Columns.Single() == 1).Control;
+                //var Grid = (Grid)child.Control;
+                //var Name = (TextLabel)Grid.Children.Single(x => x.Rows.Single() == 0 && x.Columns.Single() == 1).Control;
+                var Item = (TextLabel)child.Control;
+
                 ///var HP = (TextBlock)Grid.Children.Single(x => x.Rows.Single() == 1 && x.Columns.Single() == 1).Control;
                 //var Status = (TextBlock)Grid.Children.Single(x => x.Rows.Single() == 1 && x.Columns.Single() == 0).Control;
 
-                Grid.BorderColor = Color.Black;
+                Item.BorderColor = Color.Black;
 
                 //Status.TextString = "";
                 //Status.Background = Color.Transparent;
 
                 if (field == null)
                 {
-                    Grid.Background = Color.Green;
-                    Name.TextString = "";
+                    Item.Background = Color.Green;
+                    Item.TextString = "";
                     //HP.TextString = "";
                 }
                 else
                 {
-                    Grid.Background = Color.Blue;
-                    Name.TextString = field.Name;
+                    Item.Background = Color.Blue;
+                    Item.TextString = field.Name;
                     //HP.TextString = field.HP + "/" + field.Role.MaxHP;
-                    Grid.BorderColor = Color.Black;
+                    Item.BorderColor = Color.Black;
                 }
             }
             mainWindow.UpdateSizes();
@@ -205,7 +245,12 @@ namespace DunnoAlternative.World
 
         private void OkClicked()
         {
-            //OnSetupFinished(playerFieldGrid);
+            OnSetupFinished(playerFieldGrid);
+        }
+
+        private void CancelClicked()
+        {
+            OnSetupCanceled();
         }
     }
 }

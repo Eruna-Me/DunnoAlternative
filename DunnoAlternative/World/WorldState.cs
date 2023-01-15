@@ -39,7 +39,7 @@ namespace DunnoAlternative.World
 
         private readonly Font font = new("Content/Fonts/KosugiMaru-Regular.ttf");
 
-        private List<SquadType> squadTypes;
+        private readonly List<SquadType> squadTypes;
 
         public WorldState(RenderWindow window)
         {
@@ -102,12 +102,14 @@ namespace DunnoAlternative.World
             windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
 
-            squadTypes = new List<SquadType>();
-            squadTypes.Add(new SquadType
+            squadTypes = new List<SquadType>
             {
-                DefaultName = "The Last Samurais",
-                TypeName = "Samurai"
-            });
+                new SquadType
+                {
+                    DefaultName = "The Last Samurais",
+                    TypeName = "Samurai"
+                }
+            };
         }
 
         private void CreateSquadRecruitWindow()
@@ -193,8 +195,10 @@ namespace DunnoAlternative.World
 
                                     battleSetupWindow = new ErunaUI.Window();
                            
-                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 300, currentPlayer.UnassignedSquads);
-                            
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, true);
+                                    battleSetupUI.OnSetupFinished += SetupFinished;
+                                    battleSetupUI.OnSetupCanceled += ClosePopupWindows;
+
                                     //battleSetupWindow.Child = battleSetupUI;
                                                                 
                                     battleSetupWindow.UpdateSizes();
@@ -218,6 +222,16 @@ namespace DunnoAlternative.World
             CloseWindow(invasionWindow);
             CloseWindow(squadRecruitWindow);
             CloseWindow(battleSetupWindow);
+            if (battleSetupUI != null)
+            {
+                battleSetupUI.OnSetupCanceled -= ClosePopupWindows;
+                battleSetupUI.OnSetupFinished -= SetupFinished;
+            }
+        }
+
+        private void SetupFinished(Squad[,] squads)
+        {
+            ClosePopupWindows();
         }
 
         private void CloseWindow(ErunaUI.Window? window)
