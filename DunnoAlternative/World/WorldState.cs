@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using DunnoAlternative.Battle;
 using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using ErunaInput;
@@ -41,9 +42,12 @@ namespace DunnoAlternative.World
 
         private readonly List<SquadType> squadTypes;
 
-        public WorldState(RenderWindow window)
+        private readonly StateManager stateManager;
+
+        public WorldState(RenderWindow window, StateManager stateManager)
         {
             inputManager = new InputManager();
+            this.stateManager = stateManager;
 
             players = new List<Player> {
                 new Player(PlayerType.human, "Humanland", Color.Blue),
@@ -232,6 +236,8 @@ namespace DunnoAlternative.World
         private void SetupFinished(Squad[,] squads)
         {
             ClosePopupWindows();
+
+            stateManager.Push(new BattleState(squads,squads));
         }
 
         private void CloseWindow(ErunaUI.Window? window)

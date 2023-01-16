@@ -6,7 +6,7 @@ namespace DunnoAlternative.State
     {
         delegate void Iterator(bool isTop, IState state);
 
-        private readonly Stack<IState> _states = new();
+        private Stack<IState> _states = new();
 
         public void Clear() => _states.Clear();
 
@@ -39,10 +39,11 @@ namespace DunnoAlternative.State
             if (_states.Count == 0) return; //todo proper waiting states
 
             var current = _states.Peek();
-            foreach (var state in _states)
-            {
-                action(state == current, state);
-            }
+            //foreach (var state in _states)
+            //{
+            action(true, current);
+                //action(state == current, state);
+            //}
         }
     }
 }

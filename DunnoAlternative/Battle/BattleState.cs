@@ -4,15 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DunnoAlternative.State;
+using DunnoAlternative.World;
 using SFML.Graphics;
+using SFML.System;
 
 namespace DunnoAlternative.Battle
 {
-    internal class BattleState : IState
+    public class BattleState : IState
     {
+        List<Soldier> goodGuys;
+        //List<Soldier> badGuys;
+
+        public BattleState(Squad[,] goodGuys, Squad[,] badGuys)
+        {
+            //foreach(Squad squad in goodGuys)
+            //{//
+
+            var demoType = new SquadType
+            {
+                Texture = new Texture("Content/Textures/Samurai.png"),
+            };
+
+            this.goodGuys = new List<Soldier>
+            {
+                new Soldier(demoType, new Vector2f(100, 100))
+            };
+        }
+
         public void Draw(RenderWindow window)
         {
-            throw new NotImplementedException();
+            foreach(Soldier soldier in goodGuys)
+            {
+                soldier.Draw(window);
+            }
         }
 
         public void Update(RenderWindow window)

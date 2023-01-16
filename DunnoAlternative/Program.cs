@@ -1,4 +1,5 @@
-﻿using DunnoAlternative.State;
+﻿using DunnoAlternative.Battle;
+using DunnoAlternative.State;
 using DunnoAlternative.World;
 using SFML.Graphics;
 using SFML.System;
@@ -28,8 +29,9 @@ namespace DunnoAlternative
             window.Resized += ResizeWindow;
             window.SetFramerateLimit(FPS);
 
-            var statehandler = new StateManager();
-            statehandler.Push(new WorldState(window));
+            var stateManager = new StateManager();
+            stateManager.Push(new WorldState(window, stateManager));
+            //stateManager.Push(new BattleState(null, null));
 
             while (window.IsOpen)
             {
@@ -40,11 +42,11 @@ namespace DunnoAlternative
 
                 while (deltaLogic.AsSeconds() > 1.0f / LOGIC_UPDATES_PER_SECOND)
                 {
-                    statehandler.Update(window);
+                    stateManager.Update(window);
                     deltaLogic -= Time.FromSeconds(1.0f / LOGIC_UPDATES_PER_SECOND);
                 }
 
-                statehandler.Draw(window);
+                stateManager.Draw(window);
 
                 window.Display();
                 window.Clear();
