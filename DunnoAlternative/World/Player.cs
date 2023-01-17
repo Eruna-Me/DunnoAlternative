@@ -9,7 +9,7 @@ namespace DunnoAlternative.World
 {
     public enum PlayerType { human, CPU, passive }
 
-    internal class Player
+    public class Player
     {
         public bool Alive;
         public string Name;
@@ -28,7 +28,6 @@ namespace DunnoAlternative.World
 
         
         //Heroes
-        //Squads
         //Money
     }
 }

@@ -199,11 +199,9 @@ namespace DunnoAlternative.World
 
                                     battleSetupWindow = new ErunaUI.Window();
                            
-                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, true);
-                                    battleSetupUI.OnSetupFinished += SetupFinished;
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, tiles[tileIndex.X, tileIndex.Y].Owner);
+                                    battleSetupUI.OnAttackerFinished += AttackerSetupFinished;
                                     battleSetupUI.OnSetupCanceled += ClosePopupWindows;
-
-                                    //battleSetupWindow.Child = battleSetupUI;
                                                                 
                                     battleSetupWindow.UpdateSizes();
 
@@ -226,26 +224,43 @@ namespace DunnoAlternative.World
             CloseWindow(invasionWindow);
             CloseWindow(squadRecruitWindow);
             CloseWindow(battleSetupWindow);
+
             if (battleSetupUI != null)
             {
                 battleSetupUI.OnSetupCanceled -= ClosePopupWindows;
-                battleSetupUI.OnSetupFinished -= SetupFinished;
+                battleSetupUI.OnAttackerFinished -= AttackerSetupFinished;
+                battleSetupUI.OnSetupFinished -= DefenderSetupFinished;
             }
         }
 
-        private void SetupFinished(Squad[,] squads)
+        private void AttackerSetupFinished(Squad[,] attackers, Player defender)
         {
             ClosePopupWindows();
 
-            stateManager.Push(new BattleState(squads,squads));
+            battleSetupWindow = new ErunaUI.Window();
+
+            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, defender, attackers);
+            battleSetupUI.OnSetupFinished += DefenderSetupFinished;
+            battleSetupUI.OnSetupCanceled += ClosePopupWindows;
+
+            battleSetupWindow.UpdateSizes();
+
+            windowManager.AddWindow(battleSetupWindow);
         }
+
+        private void DefenderSetupFinished(Squad[,] attackers, Squad[,] defenders)
+        {
+            ClosePopupWindows();
+
+            stateManager.Push(new BattleState(attackers, defenders));
+        }
+        
 
         private void CloseWindow(ErunaUI.Window? window)
         {
             if (window != null)
             {
                 windowManager.RemoveWindow(window);
-                //window = null;
             }
         }
 

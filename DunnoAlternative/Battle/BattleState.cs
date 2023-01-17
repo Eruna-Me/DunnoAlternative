@@ -12,10 +12,10 @@ namespace DunnoAlternative.Battle
 {
     public class BattleState : IState
     {
-        List<Soldier> goodGuys;
+        List<Soldier> attackers;
         //List<Soldier> badGuys;
 
-        public BattleState(Squad[,] goodGuys, Squad[,] badGuys)
+        public BattleState(Squad[,] attackers, Squad[,] defenders)
         {
             //foreach(Squad squad in goodGuys)
             //{//
@@ -25,7 +25,7 @@ namespace DunnoAlternative.Battle
                 Texture = new Texture("Content/Textures/Samurai.png"),
             };
 
-            this.goodGuys = new List<Soldier>
+            this.attackers = new List<Soldier>
             {
                 new Soldier(demoType, new Vector2f(100, 100))
             };
@@ -33,7 +33,7 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
-            foreach(Soldier soldier in goodGuys)
+            foreach(Soldier soldier in attackers)
             {
                 soldier.Draw(window);
             }

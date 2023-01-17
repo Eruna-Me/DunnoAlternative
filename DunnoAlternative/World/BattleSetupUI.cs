@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using System.Reflection.Metadata;
 
 namespace DunnoAlternative.World
 {
     public class BattleSetupUI
     {
         public readonly Window mainWindow;
-        //private readonly WindowManager windowManager;
 
         private readonly Grid gameGrid;
         private readonly TextLabel okButton;
@@ -33,20 +33,16 @@ namespace DunnoAlternative.World
         const int SQUADS_PER_FORMATION = 2;
 
 
-        public event Action<Squad[,]> OnSetupFinished = delegate { };
+        public event Action<Squad[,], Player> OnAttackerFinished = delegate { };
+        public event Action<Squad[,], Squad[,]> OnSetupFinished = delegate { };
         public event Action OnSetupCanceled = delegate { };
 
-        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads, bool isAttacker)
+        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads, Player defender, Squad[,]? attackers = null)
         {
-            //this.windowManager = windowManager;
             mainWindow = window;
             WindowWidth = windowWidth;
             WindowHeight = windowHeight;
             this.font = font;
-
-            //windowManager.ClearWindows();
-
-            //windowManager.AddWindow(mainWindow);
 
             playerFieldGrid = new Squad[SQUADS_PER_FORMATION, MAX_FORMATIONS];
             unassignedSquads = squads;
@@ -96,7 +92,7 @@ namespace DunnoAlternative.World
 
             cancelButton.ClickEvent += CancelClicked;
             
-            okButton.ClickEvent += OkClicked;
+            okButton.ClickEvent += () => OkClicked(attackers, defender);
 
             gameGrid.Background = Color.Green;
 
@@ -138,7 +134,7 @@ namespace DunnoAlternative.World
             fieldGrid.Children.Add(new Cell(gameGrid, 0, 1, 1, 2));
             fieldGrid.Children.Add(new Cell(unassignedSquadsStackPanel, 1, 0, 2, 2));
             
-            if(isAttacker)
+            if(attackers == null)
             {
                 fieldGrid.Children.Add(new Cell(okButton, 1, 2));
                 fieldGrid.Children.Add(new Cell(cancelButton, 2, 2));
@@ -214,38 +210,35 @@ namespace DunnoAlternative.World
             foreach (var child in gameGrid.Children)
             {
                 var field = playerFieldGrid[child.Columns.First(), child.Rows.First()];
-                //var Grid = (Grid)child.Control;
-                //var Name = (TextLabel)Grid.Children.Single(x => x.Rows.Single() == 0 && x.Columns.Single() == 1).Control;
                 var Item = (TextLabel)child.Control;
 
-                ///var HP = (TextBlock)Grid.Children.Single(x => x.Rows.Single() == 1 && x.Columns.Single() == 1).Control;
-                //var Status = (TextBlock)Grid.Children.Single(x => x.Rows.Single() == 1 && x.Columns.Single() == 0).Control;
-
                 Item.BorderColor = Color.Black;
-
-                //Status.TextString = "";
-                //Status.Background = Color.Transparent;
 
                 if (field == null)
                 {
                     Item.Background = Color.Green;
                     Item.TextString = "";
-                    //HP.TextString = "";
                 }
                 else
                 {
                     Item.Background = Color.Blue;
                     Item.TextString = field.Name;
-                    //HP.TextString = field.HP + "/" + field.Role.MaxHP;
                     Item.BorderColor = Color.Black;
                 }
             }
             mainWindow.UpdateSizes();
         }
 
-        private void OkClicked()
+        private void OkClicked(Squad[,]? attackers, Player defenders)
         {
-            OnSetupFinished(playerFieldGrid);
+            if(attackers == null)
+            {
+                OnAttackerFinished(playerFieldGrid, defenders);
+            }
+            else
+            {
+                OnSetupFinished(attackers, playerFieldGrid);
+            }
         }
 
         private void CancelClicked()
