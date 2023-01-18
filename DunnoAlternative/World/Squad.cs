@@ -10,11 +10,13 @@ namespace DunnoAlternative.World
     {
         public string Name { get; set; }
         public SquadType Type { get; set; }
+        public int Soldiers { get; set; }
 
         public Squad(string name, SquadType type)
         {
             Name = name;
             Type = type;
+            Soldiers = type.Soldiers;
         }
     }
 }

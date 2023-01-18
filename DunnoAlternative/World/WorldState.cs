@@ -111,7 +111,9 @@ namespace DunnoAlternative.World
                 new SquadType
                 {
                     DefaultName = "The Last Samurais",
-                    TypeName = "Samurai"
+                    TypeName = "Samurai",
+                    Texture = new Texture("Content/Textures/Samurai.png"),
+                    Soldiers = 3,
                 }
             };
         }
@@ -239,7 +241,7 @@ namespace DunnoAlternative.World
 
             battleSetupWindow = new ErunaUI.Window();
 
-            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, defender, attackers);
+            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, defender.UnassignedSquads, defender, attackers);
             battleSetupUI.OnSetupFinished += DefenderSetupFinished;
             battleSetupUI.OnSetupCanceled += ClosePopupWindows;
 

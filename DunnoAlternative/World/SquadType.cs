@@ -12,5 +12,6 @@ namespace DunnoAlternative.World
         public Texture Texture { get; set; }
         public string TypeName { get; set; }
         public string DefaultName { get; set; }
+        public int Soldiers { get; set; }
     }
 }
