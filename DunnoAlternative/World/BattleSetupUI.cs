@@ -45,7 +45,7 @@ namespace DunnoAlternative.World
             this.font = font;
 
             playerFieldGrid = new Squad[SQUADS_PER_FORMATION, MAX_FORMATIONS];
-            unassignedSquads = squads;
+            unassignedSquads = new List<Squad>(squads);
 
             Grid fieldGrid = new()
             {
