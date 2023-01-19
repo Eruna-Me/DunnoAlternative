@@ -67,6 +67,14 @@ namespace DunnoAlternative.Battle
 
         public void Update(RenderWindow window)
         {
+            foreach(var soldier in attackers)
+            {
+                soldier.Update(defenders);
+            }
+            foreach(var soldier in defenders)
+            {
+                soldier.Update(attackers);
+            }
         }
     }
 }

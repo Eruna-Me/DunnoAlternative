@@ -13,5 +13,6 @@ namespace DunnoAlternative.World
         public string TypeName { get; set; }
         public string DefaultName { get; set; }
         public int Soldiers { get; set; }
+        public float MoveSpeed { get; set; }
     }
 }

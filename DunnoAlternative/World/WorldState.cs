@@ -114,6 +114,7 @@ namespace DunnoAlternative.World
                     TypeName = "Samurai",
                     Texture = new Texture("Content/Textures/Samurai.png"),
                     Soldiers = 3,
+                    MoveSpeed = 50/ Program.LOGIC_UPDATES_PER_SECOND,
                 }
             };
         }

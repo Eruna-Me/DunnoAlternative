@@ -14,7 +14,7 @@ namespace DunnoAlternative
 {
     internal class Program
     { 
-        const uint LOGIC_UPDATES_PER_SECOND = 30;
+        public const uint LOGIC_UPDATES_PER_SECOND = 30;
         const uint FPS = 60;
 
         private static void Main()
