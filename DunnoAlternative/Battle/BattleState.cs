@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using DunnoAlternative.World;
 using SFML.Graphics;
@@ -14,6 +13,7 @@ namespace DunnoAlternative.Battle
     {
         readonly List<Soldier> attackers;
         readonly List<Soldier> defenders;
+        readonly List<Soldier> soldiers;
 
         const float CENTER_X = 400;
         const float ARMY_DISTANCE_FROM_CENTER_X = 200;
@@ -26,6 +26,8 @@ namespace DunnoAlternative.Battle
         {
             this.attackers = ArrangeSoldiers(attackers, -1);
             this.defenders = ArrangeSoldiers(defenders, 1);
+            soldiers = new List<Soldier>(this.attackers);
+            soldiers.AddRange(this.defenders);
         }
 
         private static List<Soldier> ArrangeSoldiers(Squad[,] squads, float invert)
@@ -54,12 +56,7 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
-            foreach(Soldier soldier in attackers)
-            {
-                soldier.Draw(window);
-            }
-
-            foreach (Soldier soldier in defenders)
+            foreach(Soldier soldier in soldiers.OrderBy(x => x.Pos.Y))
             {
                 soldier.Draw(window);
             }
@@ -74,6 +71,31 @@ namespace DunnoAlternative.Battle
             foreach(var soldier in defenders)
             {
                 soldier.Update(attackers);
+            }
+
+            foreach(var soldierA in soldiers)
+            {
+                foreach(var SoldierB in soldiers)
+                {
+                    if (soldierA == SoldierB) continue;
+
+                    HandleCollision(soldierA, SoldierB);
+                }
+            }
+        }
+
+        private void HandleCollision(Soldier a, Soldier b)
+        {
+            var delta = a.Pos - b.Pos;
+
+            if (delta.Length() < a.Size + b.Size) //if collision
+            {
+                var norm = delta.Normalize();
+
+                var overlap = a.Size + b.Size - delta.Length();
+
+                a.Pos += overlap * norm / 2;
+                b.Pos -= overlap * norm / 2;
             }
         }
     }

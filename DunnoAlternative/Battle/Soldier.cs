@@ -16,6 +16,8 @@ namespace DunnoAlternative.Battle
         public SquadType SquadType { get; }
         public Vector2f Pos { get; set; }
         public Vector2f Target { get; set; }
+
+        public float Size { get; set; }
         private Sprite sprite;
 
         private float moveSpeed;
@@ -26,6 +28,7 @@ namespace DunnoAlternative.Battle
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
             moveSpeed = SquadType.MoveSpeed;
+            Size = squadType.Size;
         }
 
         public void Draw(RenderWindow window)
@@ -50,7 +53,6 @@ namespace DunnoAlternative.Battle
             {
                 Pos += (target.Pos - Pos).Normalize() * moveSpeed;
             }
-
         }
 
         private Soldier? FindNearestEnemy(List<Soldier> enemies)
