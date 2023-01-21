@@ -43,10 +43,18 @@ namespace DunnoAlternative.World
         private readonly List<SquadType> squadTypes;
 
         private readonly StateManager stateManager;
+        private readonly Camera camera; //TODO: dispose
+        private readonly CameraControls controls; //TODO: dispose
 
         public WorldState(RenderWindow window, StateManager stateManager)
         {
             inputManager = new InputManager();
+            camera = new Camera(window);
+            controls = new CameraControls(window, camera);
+
+            controls.SetupControls();
+
+            
             this.stateManager = stateManager;
 
             players = new List<Player> {
@@ -60,8 +68,7 @@ namespace DunnoAlternative.World
                 { new Tile("First Tile", players[0], new Vector2f(0,0)), new Tile("Second Tile", players[1], new Vector2f(0,64)), },
                 { new Tile("Other Tile", players[2], new Vector2f(64,0)), new Tile("Rebel Mountain", players[3], new Vector2f(64,64)), },
             };
-            mainView = new View(new FloatRect(0, 0, window.Size.X, window.Size.Y));
-            uiView = new View();
+
 
             currentPlayer = players[currentPlayerIndex];
 
@@ -139,12 +146,13 @@ namespace DunnoAlternative.World
 
         public void Draw(RenderWindow window)
         {
-            window.SetView(mainView);
+            window.SetView(camera.GetWorldView());
             foreach (var tile in tiles)
             {
                 tile.Draw(window);
             }
-            //window.SetView(uiView); figure out view mouse sync stuff
+            
+            window.SetView(camera.GetUiView());
             windowManager.OnDraw(window);
         }
 
@@ -268,9 +276,10 @@ namespace DunnoAlternative.World
             }
         }
 
-        private static Vector2i MousePosToTile(Vector2i mousepos)
+        private Vector2i MousePosToTile(Vector2i mousepos)
         {
-            Vector2i index = new(mousepos.X / (int)Tile.Size.X, mousepos.Y / (int)Tile.Size.Y);
+            var world = camera.ScreenToWorld(mousepos);
+            Vector2i index = new((int)(world.X / Tile.Size.X), (int)(world.Y / Tile.Size.Y));
 
             return index;
         }

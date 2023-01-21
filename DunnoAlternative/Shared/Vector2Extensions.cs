@@ -23,5 +23,10 @@ namespace DunnoAlternative.Shared
         {
             return MathF.Sqrt((vector.X * vector.X) + (vector.Y * vector.Y));
         }
+
+        public static Vector2f ToVector2f(this Vector2i vector)
+        {
+            return new Vector2f(vector.X, vector.Y);
+        }
     }
 }
