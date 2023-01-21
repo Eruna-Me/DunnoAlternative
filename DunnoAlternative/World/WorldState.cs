@@ -20,8 +20,6 @@ namespace DunnoAlternative.World
     {
         private readonly Tile[,] tiles;
         private readonly List<Player> players;
-        private readonly View mainView;
-        private readonly View uiView;
         private readonly WindowManager windowManager;
         private readonly InputManager inputManager;
         private int currentPlayerIndex = 0;
@@ -34,6 +32,7 @@ namespace DunnoAlternative.World
         private ErunaUI.Window? battleSetupWindow;
 
         private BattleSetupUI? battleSetupUI;
+        private readonly RenderWindow renderWindow;
 
         const int POPUP_WINDOW_WIDTH = 250;
         const int POPUP_BUTTON_HEIGHT = 80;
@@ -51,6 +50,8 @@ namespace DunnoAlternative.World
             inputManager = new InputManager();
             camera = new Camera(window);
             controls = new CameraControls(window, camera);
+
+            renderWindow = window;
 
             controls.SetupControls();
 
@@ -264,7 +265,7 @@ namespace DunnoAlternative.World
         {
             ClosePopupWindows();
 
-            stateManager.Push(new BattleState(attackers, defenders));
+            stateManager.Push(new BattleState(renderWindow ,attackers, defenders));
         }
         
 

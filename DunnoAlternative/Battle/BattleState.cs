@@ -4,8 +4,10 @@ using System.Text;
 using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using DunnoAlternative.World;
+using ErunaUI;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 
 namespace DunnoAlternative.Battle
 {
@@ -15,6 +17,9 @@ namespace DunnoAlternative.Battle
         readonly List<Soldier> defenders;
         readonly List<Soldier> soldiers;
 
+        private readonly Camera camera; //TODO: dispose
+        private readonly CameraControls controls; //TODO: dispose
+
         const float CENTER_X = 400;
         const float ARMY_DISTANCE_FROM_CENTER_X = 200;
         const float ARMY_DISTANCE_FROM_TOP = 100;
@@ -22,12 +27,17 @@ namespace DunnoAlternative.Battle
         const float INITIAL_SQUAD_SPACING_X = 100;
         const float INITIAL_SQUAD_SPACING_Y = 125;
 
-        public BattleState(Squad[,] attackers, Squad[,] defenders)
+        public BattleState(RenderWindow window, Squad[,] attackers, Squad[,] defenders)
         {
             this.attackers = ArrangeSoldiers(attackers, -1);
             this.defenders = ArrangeSoldiers(defenders, 1);
             soldiers = new List<Soldier>(this.attackers);
             soldiers.AddRange(this.defenders);
+
+            camera = new Camera(window);
+            controls = new CameraControls(window, camera);
+
+            controls.SetupControls();
         }
 
         private static List<Soldier> ArrangeSoldiers(Squad[,] squads, float invert)
@@ -56,10 +66,15 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
-            foreach(Soldier soldier in soldiers.OrderBy(x => x.Pos.Y))
+            window.SetView(camera.GetWorldView());
+            
+            foreach (Soldier soldier in soldiers.OrderBy(x => x.Pos.Y))
             {
                 soldier.Draw(window);
             }
+
+            window.SetView(camera.GetUiView());
+            //windowManager.OnDraw(window);
         }
 
         public void Update(RenderWindow window)
@@ -84,7 +99,7 @@ namespace DunnoAlternative.Battle
             }
         }
 
-        private void HandleCollision(Soldier a, Soldier b)
+        private static void HandleCollision(Soldier a, Soldier b)
         {
             var delta = a.Pos - b.Pos;
 
