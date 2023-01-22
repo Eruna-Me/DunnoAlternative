@@ -6,14 +6,7 @@ namespace DunnoAlternative.World;
 
 internal class Camera : IDisposable
 {
-    private RectangleShape testshape = new RectangleShape()
-    {
-        Size = new(20,20),
-        Origin = new(10,10),
-        FillColor = Color.Red,
-    };
-
-    private View worldView;
+    private readonly View worldView;
     private View uiView;
 
     private Vector2f pivotStartView;
@@ -24,14 +17,12 @@ internal class Camera : IDisposable
     private Vector2i mousePosition;
 
     private readonly Vector2i initialSize;
-    private readonly RenderWindow window;
 
     public Camera(RenderWindow window)
     {
         initialSize = new Vector2i((int)window.Size.X, (int)window.Size.Y);
         worldView = new(new FloatRect(0, 0, window.Size.X, window.Size.Y));
         uiView = new(new FloatRect(0, 0, window.Size.X, window.Size.Y));
-        this.window = window;
     }    
 
     public Vector2f ScreenToWorld(Vector2i position)

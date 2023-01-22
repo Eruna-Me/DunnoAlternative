@@ -34,7 +34,7 @@ namespace DunnoAlternative.World
 
 
         public event Action<Squad[,], Player> OnAttackerFinished = delegate { };
-        public event Action<Squad[,], Squad[,]> OnSetupFinished = delegate { };
+        public event Action<Squad[,], Squad[,], Player> OnSetupFinished = delegate { };
         public event Action OnSetupCanceled = delegate { };
 
         public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads, Player defender, Squad[,]? attackers = null)
@@ -229,15 +229,15 @@ namespace DunnoAlternative.World
             mainWindow.UpdateSizes();
         }
 
-        private void OkClicked(Squad[,]? attackers, Player defenders)
+        private void OkClicked(Squad[,]? attackers, Player defender)
         {
             if(attackers == null)
             {
-                OnAttackerFinished(playerFieldGrid, defenders);
+                OnAttackerFinished(playerFieldGrid, defender);
             }
             else
             {
-                OnSetupFinished(attackers, playerFieldGrid);
+                OnSetupFinished(attackers, playerFieldGrid, defender);
             }
         }
 

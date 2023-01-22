@@ -27,10 +27,10 @@ namespace DunnoAlternative.Battle
         const float INITIAL_SQUAD_SPACING_X = 100;
         const float INITIAL_SQUAD_SPACING_Y = 125;
 
-        public BattleState(RenderWindow window, Squad[,] attackers, Squad[,] defenders)
+        public BattleState(RenderWindow window, Squad[,] attackers, Squad[,] defenders, Player attacker, Player defender)
         {
-            this.attackers = ArrangeSoldiers(attackers, -1);
-            this.defenders = ArrangeSoldiers(defenders, 1);
+            this.attackers = ArrangeSoldiers(attackers, attacker, -1);
+            this.defenders = ArrangeSoldiers(defenders, defender, 1);
             soldiers = new List<Soldier>(this.attackers);
             soldiers.AddRange(this.defenders);
 
@@ -40,12 +40,12 @@ namespace DunnoAlternative.Battle
             controls.SetupControls();
         }
 
-        private static List<Soldier> ArrangeSoldiers(Squad[,] squads, float invert)
+        private static List<Soldier> ArrangeSoldiers(Squad[,] squads, Player player, float invert)
         {
             var soldiers = new List<Soldier>();
 
             for (int x = 0; x <= squads.GetUpperBound(0); x++)
-            {              
+            {
                 for (int y = 0; y <= squads.GetUpperBound(1); y++)
                 {
                     if (squads[x, y] == null) continue;
@@ -54,9 +54,11 @@ namespace DunnoAlternative.Battle
                     {
                         soldiers.Add(new Soldier(
                             squads[x, y].Type,
-                            new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * x) * invert, 
-                                        ARMY_DISTANCE_FROM_TOP + y * INITIAL_SQUAD_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y)
-                            ));
+                            new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * x) * invert,
+                                        ARMY_DISTANCE_FROM_TOP + y * INITIAL_SQUAD_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y),
+                            player
+                            )
+                        );
                     }
                 }
             }
@@ -66,8 +68,10 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
+            window.Clear(new Color(0,128,0));
+
             window.SetView(camera.GetWorldView());
-            
+
             foreach (Soldier soldier in soldiers.OrderBy(x => x.Pos.Y))
             {
                 soldier.Draw(window);
@@ -79,18 +83,22 @@ namespace DunnoAlternative.Battle
 
         public void Update(RenderWindow window)
         {
-            foreach(var soldier in attackers)
+            foreach (var soldier in attackers)
             {
                 soldier.Update(defenders);
             }
-            foreach(var soldier in defenders)
+            foreach (var soldier in defenders)
             {
                 soldier.Update(attackers);
             }
 
-            foreach(var soldierA in soldiers)
+            soldiers.RemoveAll(x => !x.Alive);
+            defenders.RemoveAll(x => !x.Alive);
+            attackers.RemoveAll(x => !x.Alive);
+
+            foreach (var soldierA in soldiers)
             {
-                foreach(var SoldierB in soldiers)
+                foreach (var SoldierB in soldiers)
                 {
                     if (soldierA == SoldierB) continue;
 

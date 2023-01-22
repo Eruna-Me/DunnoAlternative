@@ -122,8 +122,12 @@ namespace DunnoAlternative.World
                     TypeName = "Samurai",
                     Texture = new Texture("Content/Textures/Samurai.png"),
                     Soldiers = 3,
-                    MoveSpeed = 50/ Program.LOGIC_UPDATES_PER_SECOND,
+                    MoveSpeed = 50 / Program.LOGIC_UPDATES_PER_SECOND,
                     Size = 16,
+                    AttackSpeed = 1.5f * Program.LOGIC_UPDATES_PER_SECOND,
+                    HP = 100,
+                    Damage = 5,
+                    Range = 50,
                 }
             };
         }
@@ -261,11 +265,11 @@ namespace DunnoAlternative.World
             windowManager.AddWindow(battleSetupWindow);
         }
 
-        private void DefenderSetupFinished(Squad[,] attackers, Squad[,] defenders)
+        private void DefenderSetupFinished(Squad[,] attackers, Squad[,] defenders, Player defender)
         {
             ClosePopupWindows();
 
-            stateManager.Push(new BattleState(renderWindow ,attackers, defenders));
+            stateManager.Push(new BattleState(renderWindow ,attackers, defenders, currentPlayer, defender));
         }
         
 

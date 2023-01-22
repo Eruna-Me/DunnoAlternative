@@ -15,5 +15,9 @@ namespace DunnoAlternative.World
         public int Soldiers { get; set; }
         public float MoveSpeed { get; set; }
         public float Size { get; set; }
+        public  float AttackSpeed { get; set; }
+        public  float Damage { get; set; }
+        public  float Range { get; set; }
+        public float HP { get; set; }
     }
 }

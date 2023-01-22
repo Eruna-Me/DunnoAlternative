@@ -2,12 +2,6 @@
 using DunnoAlternative.World;
 using SFML.Graphics;
 using SFML.System;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DunnoAlternative.Battle
 {
@@ -17,33 +11,83 @@ namespace DunnoAlternative.Battle
         public Vector2f Pos { get; set; }
         public Vector2f Target { get; set; }
 
-        public float Size { get; set; }
-        private Sprite sprite;
+        public float Size { get; }
+        public bool Alive { get; private set; }
 
-        private float moveSpeed;
+        private readonly Sprite sprite;
+        private readonly RectangleShape healthBarForeground;
+        private readonly RectangleShape healthBarBackground;
 
-        public Soldier(SquadType squadType, Vector2f initialPos)
+        private readonly float moveSpeed;
+        private readonly float attackSpeed;
+        private readonly float damage;
+        private readonly float range;
+        private float hp;
+        private readonly float maxHp;
+
+        private int delay;
+
+        private const int HEALTH_BAR_SIZE_Y = 5;
+
+        public Soldier(SquadType squadType, Vector2f initialPos, Player player)
         {
             SquadType = squadType;
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
             moveSpeed = SquadType.MoveSpeed;
             Size = squadType.Size;
+            attackSpeed = SquadType.AttackSpeed;
+            damage = SquadType.Damage;
+            range = SquadType.Range;
+            hp = SquadType.HP;
+            maxHp = hp;
+
+            Alive = true;
+
+            healthBarForeground = new RectangleShape
+            {
+                Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
+                FillColor = player.Color,
+            };
+
+            healthBarBackground = new RectangleShape
+            {
+                Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
+                FillColor = Color.Black,
+            };
         }
 
         public void Draw(RenderWindow window)
         {
+            if (!Alive) return;
+
             sprite.Position = Pos;
+            healthBarBackground.Position = Pos - new Vector2f(0, sprite.Texture.Size.Y / 2);
+            healthBarForeground.Position = healthBarBackground.Position;
+
             window.Draw(sprite);
+            window.Draw(healthBarBackground);
+            window.Draw(healthBarForeground);
         }
 
         public void Update(List<Soldier> enemies)
-        {
+        {   
+            if (!Alive) return;
+
+            delay--;
+
             var target = FindNearestEnemy(enemies);
 
             if (target == null) return;
 
             var delta = (target.Pos - Pos);
+
+            if (delay <= 0 && delta.Length() < range + target.Size)
+            {
+                target.Damage(damage);
+                
+                delay = (int)attackSpeed;
+            } 
 
             if (delta.Length() < moveSpeed)
             {
@@ -52,6 +96,20 @@ namespace DunnoAlternative.Battle
             else
             {
                 Pos += (target.Pos - Pos).Normalize() * moveSpeed;
+            }
+        }
+
+        public void Damage(float damage)
+        {
+            hp -= damage;
+
+            if(hp < 0)
+            {
+                Alive = false;
+            }
+            else
+            {
+                healthBarForeground.Size = new Vector2f(sprite.Texture.Size.X * (hp / maxHp), HEALTH_BAR_SIZE_Y);
             }
         }
 
