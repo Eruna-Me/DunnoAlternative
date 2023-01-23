@@ -27,6 +27,8 @@ namespace DunnoAlternative.Battle
         const float INITIAL_SQUAD_SPACING_X = 100;
         const float INITIAL_SQUAD_SPACING_Y = 125;
 
+        private readonly BattleTerrain battleTerrain;
+
         public BattleState(RenderWindow window, Squad[,] attackers, Squad[,] defenders, Player attacker, Player defender)
         {
             this.attackers = ArrangeSoldiers(attackers, attacker, -1);
@@ -38,6 +40,8 @@ namespace DunnoAlternative.Battle
             controls = new CameraControls(window, camera);
 
             controls.SetupControls();
+
+            battleTerrain = new BattleTerrain(new Texture("Content/Textures/Terrain.png"), new Vector2u(128,128), new Vector2u(20,20));
         }
 
         private static List<Soldier> ArrangeSoldiers(Squad[,] squads, Player player, float invert)
@@ -68,7 +72,7 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
-            window.Clear(new Color(0,128,0));
+            battleTerrain.Draw(window);
 
             window.SetView(camera.GetWorldView());
 
