@@ -72,9 +72,9 @@ namespace DunnoAlternative.Battle
 
         public void Draw(RenderWindow window)
         {
-            battleTerrain.Draw(window);
-
             window.SetView(camera.GetWorldView());
+
+            battleTerrain.Draw(window);
 
             foreach (Soldier soldier in soldiers.OrderBy(x => x.Pos.Y))
             {
