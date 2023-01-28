@@ -13,6 +13,8 @@ namespace DunnoAlternative.Battle
 {
     public class BattleState : IState
     {
+        private readonly WorldState world;
+
         readonly List<Soldier> attackers;
         readonly List<Soldier> defenders;
         readonly List<Soldier> soldiers;
@@ -29,7 +31,7 @@ namespace DunnoAlternative.Battle
 
         private readonly BattleTerrain battleTerrain;
 
-        public BattleState(RenderWindow window, Squad[,] attackers, Squad[,] defenders, Player attacker, Player defender)
+        public BattleState(WorldState world, RenderWindow window, Squad[,] attackers, Squad[,] defenders, Player attacker, Player defender)
         {
             this.attackers = ArrangeSoldiers(attackers, attacker, -1);
             this.defenders = ArrangeSoldiers(defenders, defender, 1);
@@ -42,6 +44,8 @@ namespace DunnoAlternative.Battle
             controls.SetupControls();
 
             battleTerrain = new BattleTerrain(new Texture("Content/Textures/Terrain.png"), new Vector2u(128,128), new Vector2u(20,20));
+
+            this.world = world;
         }
 
         private static List<Soldier> ArrangeSoldiers(Squad[,] squads, Player player, float invert)
@@ -108,6 +112,15 @@ namespace DunnoAlternative.Battle
 
                     HandleCollision(soldierA, SoldierB);
                 }
+            }
+
+            if (attackers.Count == 0)
+            {
+                world.BattleResult(false);
+            }
+            else if (defenders.Count == 0)
+            {
+                world.BattleResult(true);
             }
         }
 

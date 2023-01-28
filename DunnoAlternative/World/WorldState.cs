@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using SFML.Window;
 
 namespace DunnoAlternative.World
 {
-    internal class WorldState : IState
+    public class WorldState : IState
     {
         private readonly Tile[,] tiles;
         private readonly List<Player> players;
@@ -38,6 +39,8 @@ namespace DunnoAlternative.World
         const int POPUP_BUTTON_HEIGHT = 80;
 
         private readonly Font font = new("Content/Fonts/KosugiMaru-Regular.ttf");
+
+        Vector2i invadedTile;
 
         private readonly List<SquadType> squadTypes;
 
@@ -132,6 +135,30 @@ namespace DunnoAlternative.World
             };
         }
 
+        public void BattleResult(bool attackerWon)
+        {
+            if (attackerWon)
+            {
+                var oldOwner = tiles[invadedTile.X, invadedTile.Y].Owner;
+
+                tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer);
+
+                CheckPlayerAlive(oldOwner);
+            }
+
+            stateManager.Pop();
+        }
+
+        private void CheckPlayerAlive(Player player)
+        {
+            foreach (var tile in tiles)
+            {
+                if (tile.Owner == player) break;
+            }
+
+            player.Alive = false;
+        }
+
         private void CreateSquadRecruitWindow()
         {
             var buttons = new List<(string, Action)>();
@@ -175,7 +202,7 @@ namespace DunnoAlternative.World
             currentPlayerIndicator.Background = currentPlayer.Color;
             //currentplayer.turnstart
 
-            if (currentPlayer.Type == PlayerType.passive) EndTurn();
+            if (currentPlayer.Type == PlayerType.passive || currentPlayer.Alive == false) EndTurn();
         }
 
         public void Update(RenderWindow window)
@@ -188,10 +215,10 @@ namespace DunnoAlternative.World
             {
                 ClosePopupWindows();
 
-                var tileIndex = MousePosToTile(inputManager.MousePos);
-                if (TileExists(tileIndex))
+                invadedTile = MousePosToTile(inputManager.MousePos);
+                if (TileExists(invadedTile))
                 {
-                    if (tiles[tileIndex.X, tileIndex.Y].Owner == currentPlayer)
+                    if (tiles[invadedTile.X, invadedTile.Y].Owner == currentPlayer)
                     {
                         var buttons = new List<(string, Action)>
                         {
@@ -205,18 +232,18 @@ namespace DunnoAlternative.World
                     }
                     else
                     {
-                        if (CheckNeighbors(tileIndex))
+                        if (CheckNeighbors(invadedTile))
                         {
 
                             var buttons = new List<(string, Action)>
                             {
-                                ("InvadeOld", ()=>{ tiles[tileIndex.X, tileIndex.Y].ChangeOwner(currentPlayer); }),
+                                ("InvadeOld", ()=>{ tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer); }),
                                 ("InvadeAdvanced", ()=>{
                                     ClosePopupWindows();
 
                                     battleSetupWindow = new ErunaUI.Window();
                            
-                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, tiles[tileIndex.X, tileIndex.Y].Owner);
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, tiles[invadedTile.X, invadedTile.Y].Owner);
                                     battleSetupUI.OnAttackerFinished += AttackerSetupFinished;
                                     battleSetupUI.OnSetupCanceled += ClosePopupWindows;
                                                                 
@@ -225,7 +252,6 @@ namespace DunnoAlternative.World
                                     windowManager.AddWindow(battleSetupWindow);
                                 }),
                             };
-
 
                             invasionWindow = CreatePopupWindow(inputManager.MousePos, buttons);
                             windowManager.AddWindow(invasionWindow);
@@ -269,9 +295,8 @@ namespace DunnoAlternative.World
         {
             ClosePopupWindows();
 
-            stateManager.Push(new BattleState(renderWindow ,attackers, defenders, currentPlayer, defender));
+            stateManager.Push(new BattleState(this, renderWindow ,attackers, defenders, currentPlayer, defender));
         }
-        
 
         private void CloseWindow(ErunaUI.Window? window)
         {
