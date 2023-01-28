@@ -8,15 +8,13 @@ namespace DunnoAlternative.Battle
     {
         private readonly VertexArray vertices;
         private RenderStates renderStates;
-        private Texture tileset;
+        private readonly Texture tileset;
 
         public BattleTerrain(Texture tileset, Vector2u tileSize, Vector2u size) //seed? //terraintype? //tileset meta date?
         {
             vertices = new VertexArray(PrimitiveType.Quads, size.X * size.Y * 4); //quads have 4 vertices obviously
 
             this.tileset = tileset;
-
-            Random random = new();
 
             renderStates = new RenderStates
             {
@@ -29,7 +27,7 @@ namespace DunnoAlternative.Battle
             {
                 for (uint y = 0; y < size.Y; y++)
                 {
-                    uint tileNumber = (uint)random.Next(4);// todo
+                    uint tileNumber = (uint)Global.random.Next(4);// todo
 
                     // find its position in the tileset texture
                     uint tu = tileNumber % (tileset.Size.X / tileSize.X);

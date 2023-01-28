@@ -19,8 +19,8 @@ namespace DunnoAlternative.Battle
         private readonly RectangleShape healthBarBackground;
 
         private readonly float moveSpeed;
-        private readonly float attackSpeed;
-        private readonly float damage;
+        private readonly Vector2f attackSpeed;
+        private readonly Vector2f damage;
         private readonly float range;
         private float hp;
         private readonly float maxHp;
@@ -34,12 +34,12 @@ namespace DunnoAlternative.Battle
             SquadType = squadType;
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
-            moveSpeed = SquadType.MoveSpeed;
+            moveSpeed = SquadType.MoveSpeed.RandomFromRange();
             Size = squadType.Size;
             attackSpeed = SquadType.AttackSpeed;
             damage = SquadType.Damage;
-            range = SquadType.Range;
-            hp = SquadType.HP;
+            range = SquadType.Range.RandomFromRange();
+            hp = SquadType.HP.RandomFromRange();
             maxHp = hp;
 
             Alive = true;
@@ -84,9 +84,9 @@ namespace DunnoAlternative.Battle
 
             if (delay <= 0 && delta.Length() < range + target.Size)
             {
-                target.Damage(damage);
+                target.Damage(damage.RandomFromRange());
                 
-                delay = (int)attackSpeed;
+                delay = (int)attackSpeed.RandomFromRange();
             } 
 
             if (delta.Length() < moveSpeed)

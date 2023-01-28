@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.System;
@@ -27,6 +28,10 @@ namespace DunnoAlternative.Shared
         public static Vector2f ToVector2f(this Vector2i vector)
         {
             return new Vector2f(vector.X, vector.Y);
+        }
+        public static float RandomFromRange(this Vector2f range)
+        {
+            return range.X + (range.Y - range.X) * Global.random.NextSingle();
         }
     }
 }

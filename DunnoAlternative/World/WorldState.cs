@@ -122,12 +122,12 @@ namespace DunnoAlternative.World
                     TypeName = "Samurai",
                     Texture = new Texture("Content/Textures/Samurai.png"),
                     Soldiers = 3,
-                    MoveSpeed = 50 / Program.LOGIC_UPDATES_PER_SECOND,
+                    MoveSpeed = new Vector2f(45,55) / Program.LOGIC_UPDATES_PER_SECOND,
                     Size = 16,
-                    AttackSpeed = 1.5f * Program.LOGIC_UPDATES_PER_SECOND,
-                    HP = 100,
-                    Damage = 5,
-                    Range = 50,
+                    AttackSpeed = new Vector2f(2.4f, 2.6f) * Program.LOGIC_UPDATES_PER_SECOND,
+                    HP = new Vector2f(80, 120),
+                    Damage = new Vector2f(4,16),
+                    Range = new Vector2f(50,50),
                 }
             };
         }
