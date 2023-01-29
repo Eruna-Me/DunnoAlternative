@@ -69,8 +69,8 @@ namespace DunnoAlternative.World
             };
 
             tiles = new Tile[,] {
-                { new Tile("First Tile", players[0], new Vector2f(0,0)), new Tile("Second Tile", players[1], new Vector2f(0,64)), },
-                { new Tile("Other Tile", players[2], new Vector2f(64,0)), new Tile("Rebel Mountain", players[3], new Vector2f(64,64)), },
+                { new Tile(font, "First Tile", players[0], new Vector2f(0,0)), new Tile(font, "Second Tile", players[1], new Vector2f(0,Tile.Size.Y)), },
+                { new Tile(font, "Other Tile", players[2], new Vector2f(Tile.Size.X,0)), new Tile(font, "Rebel Mountain", players[3], new Vector2f(Tile.Size.X,Tile.Size.Y)), },
             };
 
 
@@ -223,8 +223,6 @@ namespace DunnoAlternative.World
                         var buttons = new List<(string, Action)>
                         {
                             ("Upgrade Castle", ()=>{ }),
-                            ("Test", ()=>{ }),
-                            ("Dunno", ()=>{ }),
                         };
 
                         buildWindow = CreatePopupWindow(inputManager.MousePos, buttons);
@@ -237,8 +235,7 @@ namespace DunnoAlternative.World
 
                             var buttons = new List<(string, Action)>
                             {
-                                ("InvadeOld", ()=>{ tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer); }),
-                                ("InvadeAdvanced", ()=>{
+                                ("Invade", ()=>{
                                     ClosePopupWindows();
 
                                     battleSetupWindow = new ErunaUI.Window();

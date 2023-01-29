@@ -12,17 +12,18 @@ namespace DunnoAlternative.World
 {
     internal class Tile : IDrawable
     {
-        public static readonly Vector2f Size = new(64.0f,64.0f);
+        public static readonly Vector2f Size = new(128.0f, 128.0f);
         public Player Owner { get; set; }
         public string Name { get; set; }
 
         private readonly RectangleShape shape;
+        private readonly Text text;
 
         //terrain type
         //buildings
         //Water/other special impassible tiles?
 
-        public Tile(string name, Player owner, Vector2f position)
+        public Tile(Font font, string name, Player owner, Vector2f position)
         {
             Owner = owner;
             Name = name;
@@ -32,6 +33,13 @@ namespace DunnoAlternative.World
             };
 
             ChangeOwner(owner);
+
+            text = new Text(Name, font)
+            {
+                CharacterSize = 18,
+                Position = position,
+                FillColor = Color.Black,
+            };
         }
 
         public void ChangeOwner(Player newOwner)
@@ -43,6 +51,9 @@ namespace DunnoAlternative.World
         public void Draw(RenderWindow window)
         {
             window.Draw(shape);
+
+
+            window.Draw(text);
         }
         public bool IsMouseOver(Vector2i mousePos)
         {
