@@ -56,8 +56,6 @@ namespace DunnoAlternative.World
 
             renderWindow = window;
 
-            controls.SetupControls();
-
             
             this.stateManager = stateManager;
 
@@ -374,6 +372,16 @@ namespace DunnoAlternative.World
             window.UpdateSizes();
 
             return window;
+        }
+
+        public void Unload()
+        {
+            controls.UnSetupControls();
+        }
+
+        public void Load()
+        {
+            controls.SetupControls();
         }
     }
 }

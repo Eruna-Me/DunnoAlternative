@@ -51,8 +51,6 @@ namespace DunnoAlternative.World
         public void Draw(RenderWindow window)
         {
             window.Draw(shape);
-
-
             window.Draw(text);
         }
         public bool IsMouseOver(Vector2i mousePos)

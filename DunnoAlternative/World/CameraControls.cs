@@ -24,6 +24,15 @@ internal class CameraControls : IDisposable
         window.MouseWheelScrolled += MouseWheelScrolled;
     }
 
+    public void UnSetupControls()
+    {
+        window.Resized -= Resized;
+        window.MouseMoved -= MouseMoved;
+        window.MouseButtonPressed -= MousePressed;
+        window.MouseButtonReleased -= MouseReleased;
+        window.MouseWheelScrolled -= MouseWheelScrolled;
+    }
+
     private void Resized(object? sender, SizeEventArgs e)
     {
         camera.Resize((int)e.Width, (int)e.Height);

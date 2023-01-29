@@ -41,8 +41,6 @@ namespace DunnoAlternative.Battle
             camera = new Camera(window);
             controls = new CameraControls(window, camera);
 
-            controls.SetupControls();
-
             battleTerrain = new BattleTerrain(new Texture("Content/Textures/Terrain.png"), new Vector2u(128,128), new Vector2u(20,20));
 
             this.world = world;
@@ -137,6 +135,16 @@ namespace DunnoAlternative.Battle
                 a.Pos += overlap * norm / 2;
                 b.Pos -= overlap * norm / 2;
             }
+        }
+        
+        public void Unload()
+        {
+            controls.UnSetupControls();
+        }
+
+        public void Load()
+        {
+            controls.SetupControls();
         }
     }
 }

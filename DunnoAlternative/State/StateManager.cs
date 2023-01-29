@@ -6,13 +6,32 @@ namespace DunnoAlternative.State
     {
         delegate void Iterator(bool isTop, IState state);
 
-        private Stack<IState> _states = new();
+        private readonly Stack<IState> _states = new();
 
-        public void Clear() => _states.Clear();
+        public void Clear()
+        {
+            foreach(IState state in _states)
+            {
+                state.Unload();
+            }
+            _states.Clear();
+        }   
 
-        public void Push(IState state) => _states.Push(state);
+        public void Push(IState state)
+        {
+            if(_states.Count > 0) _states.Peek().Unload();
 
-        public IState Pop() => _states.Pop();
+            _states.Push(state);
+            state.Load();
+        }
+
+        public IState Pop()
+        {
+            var old = _states.Pop();
+            old.Unload();
+            _states.Peek().Load();
+            return old;
+        }
 
         public void Draw(RenderWindow window)
         {
