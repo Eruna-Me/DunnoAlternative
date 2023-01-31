@@ -16,6 +16,7 @@ namespace DunnoAlternative.World
         public PlayerType Type { get; }
         public Color Color { get; }
         public List<Squad> UnassignedSquads { get; set; }
+        public int Money { get; set; }
 
         public Player(PlayerType type, string name, Color color)
         {
@@ -25,9 +26,7 @@ namespace DunnoAlternative.World
             Name = name;
             UnassignedSquads = new List<Squad>();
         }
-
         
         //Heroes
-        //Money
     }
 }

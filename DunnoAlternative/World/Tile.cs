@@ -15,6 +15,7 @@ namespace DunnoAlternative.World
         public static readonly Vector2f Size = new(128.0f, 128.0f);
         public Player Owner { get; set; }
         public string Name { get; set; }
+        public int Income { get; set; }
 
         private readonly RectangleShape shape;
         private readonly Text text;
@@ -23,8 +24,9 @@ namespace DunnoAlternative.World
         //buildings
         //Water/other special impassible tiles?
 
-        public Tile(Font font, string name, Player owner, Vector2f position)
+        public Tile(Font font, string name, Player owner, int income, Vector2f position)
         {
+            Income = income;
             Owner = owner;
             Name = name;
             shape = new RectangleShape(Size)

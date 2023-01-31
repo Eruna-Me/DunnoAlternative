@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using DunnoAlternative.Battle;
@@ -26,6 +24,7 @@ namespace DunnoAlternative.World
         private int currentPlayerIndex = 0;
         private Player currentPlayer;
         private readonly Control currentPlayerIndicator;
+        private readonly TextLabel moneyIndicator;
 
         private ErunaUI.Window? buildWindow;
         private ErunaUI.Window? invasionWindow;
@@ -67,10 +66,9 @@ namespace DunnoAlternative.World
             };
 
             tiles = new Tile[,] {
-                { new Tile(font, "First Tile", players[0], new Vector2f(0,0)), new Tile(font, "Second Tile", players[1], new Vector2f(0,Tile.Size.Y)), },
-                { new Tile(font, "Other Tile", players[2], new Vector2f(Tile.Size.X,0)), new Tile(font, "Rebel Mountain", players[3], new Vector2f(Tile.Size.X,Tile.Size.Y)), },
+                { new Tile(font, "First Tile", players[0], 300, new Vector2f(0,0)), new Tile(font, "Second Tile", players[1], 300, new Vector2f(0,Tile.Size.Y)), },
+                { new Tile(font, "Other Tile", players[2], 300, new Vector2f(Tile.Size.X,0)), new Tile(font, "Rebel Mountain", players[3], 300, new Vector2f(Tile.Size.X,Tile.Size.Y)), },
             };
-
 
             currentPlayer = players[currentPlayerIndex];
 
@@ -80,6 +78,14 @@ namespace DunnoAlternative.World
                 BorderColor = Color.Black,
                 BorderThickness = 3,
                 TextString = "End Turn",
+            };
+
+            moneyIndicator = new TextLabel(font)
+            {
+                Background = Color.Blue,
+                BorderColor = Color.Black,
+                BorderThickness = 3,
+                TextString = "$0",
             };
 
             var btnRecruitSquad = new TextLabel(font)
@@ -92,7 +98,7 @@ namespace DunnoAlternative.World
 
             var demoGrid = new Grid
             {
-                Rows = GridRow.GenerateRows(1),
+                Rows = GridRow.GenerateRows(2),
                 Columns = GridRow.GenerateRows(2),
                 TrueHeight = 100,
                 TrueWidth = 800,
@@ -101,7 +107,8 @@ namespace DunnoAlternative.World
             };
 
             demoGrid.Children.Add(new Cell(currentPlayerIndicator, new List<int> { 1 }, new List<int> { 0 }));
-            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0 }));
+            demoGrid.Children.Add(new Cell(moneyIndicator, new List<int> { 1 }, new List<int> { 1 }));
+            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0,1 }));
 
             btnRecruitSquad.ClickEvent += CreateSquadRecruitWindow;
             currentPlayerIndicator.ClickEvent += EndTurn;
@@ -129,78 +136,11 @@ namespace DunnoAlternative.World
                     HP = new Vector2f(80, 120),
                     Damage = new Vector2f(4,16),
                     Range = new Vector2f(50,50),
+                    Max = 0,
+                    Cost = 500,
+                    CostMultiplier = 1.1f,
                 }
             };
-        }
-
-        public void BattleResult(bool attackerWon)
-        {
-            if (attackerWon)
-            {
-                var oldOwner = tiles[invadedTile.X, invadedTile.Y].Owner;
-
-                tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer);
-
-                CheckPlayerAlive(oldOwner);
-            }
-
-            stateManager.Pop();
-        }
-
-        private void CheckPlayerAlive(Player player)
-        {
-            foreach (var tile in tiles)
-            {
-                if (tile.Owner == player) break;
-            }
-
-            player.Alive = false;
-        }
-
-        private void CreateSquadRecruitWindow()
-        {
-            var buttons = new List<(string, Action)>();
-
-            foreach (var type in squadTypes)
-            {
-                buttons.Add((type.TypeName, () =>
-                {
-                    currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type));
-                }
-                ));
-            }
-
-            squadRecruitWindow = CreatePopupWindow(new Vector2i(100, 100), buttons);
-            windowManager.AddWindow(squadRecruitWindow);
-        }
-
-        public void Draw(RenderWindow window)
-        {
-            window.SetView(camera.GetWorldView());
-            foreach (var tile in tiles)
-            {
-                tile.Draw(window);
-            }
-            
-            window.SetView(camera.GetUiView());
-            windowManager.OnDraw(window);
-        }
-
-        private void EndTurn()
-        {
-            ClosePopupWindows();
-
-            currentPlayerIndex++;
-            if (currentPlayerIndex >= players.Count)
-            {
-                currentPlayerIndex = 0;
-            }
-
-            currentPlayer = players[currentPlayerIndex];
-            currentPlayerIndicator.Background = currentPlayer.Color;
-            //currentplayer.turnstart
-
-            if (currentPlayer.Type == PlayerType.passive || currentPlayer.Alive == false) EndTurn();
         }
 
         public void Update(RenderWindow window)
@@ -237,11 +177,11 @@ namespace DunnoAlternative.World
                                     ClosePopupWindows();
 
                                     battleSetupWindow = new ErunaUI.Window();
-                           
+
                                     battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, tiles[invadedTile.X, invadedTile.Y].Owner);
                                     battleSetupUI.OnAttackerFinished += AttackerSetupFinished;
                                     battleSetupUI.OnSetupCanceled += ClosePopupWindows;
-                                                                
+
                                     battleSetupWindow.UpdateSizes();
 
                                     windowManager.AddWindow(battleSetupWindow);
@@ -254,6 +194,110 @@ namespace DunnoAlternative.World
                     }
                 }
             }
+        }
+
+        public void BattleResult(bool attackerWon)
+        {
+            if (attackerWon)
+            {
+                var oldOwner = tiles[invadedTile.X, invadedTile.Y].Owner;
+
+                tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer);
+
+                CheckPlayerAlive(oldOwner);
+            }
+
+            stateManager.Pop();
+        }
+
+        const int BASE_INCOME = 500;
+
+        private void TurnStart()
+        {
+            currentPlayer.Money += BASE_INCOME;
+
+            foreach(var tile in tiles)
+            {
+                if(tile.Owner == currentPlayer)
+                {
+                    currentPlayer.Money += tile.Income;
+                }
+            }
+
+            moneyIndicator.TextString = "$" + currentPlayer.Money;
+        }
+
+        private void CheckPlayerAlive(Player player)
+        {
+            foreach (var tile in tiles)
+            {
+                if (tile.Owner == player) break;
+            }
+
+            player.Alive = false;
+        }
+
+        private void CreateSquadRecruitWindow()
+        {
+            var buttons = new List<(string, Action)>();
+
+            foreach (var type in squadTypes)
+            {
+                var count = currentPlayer.UnassignedSquads.Count(x => x.Type.TypeName == type.TypeName);
+
+                if (type.Max > 0 && count >= type.Max) continue;
+
+                int cost = (int)(type.Cost * MathF.Pow(type.CostMultiplier, count));
+
+                buttons.Add((type.TypeName + " - $" + cost + " - " + count + "/" + (type.Max == 0 ? "-":type.Max), () =>
+                {
+                    if (currentPlayer.Money >= cost)
+                    {
+                        currentPlayer.Money -= cost;
+                        moneyIndicator.TextString = "$" + currentPlayer.Money;
+                        currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type));
+                        ClosePopupWindows();
+                        CreateSquadRecruitWindow();
+                    }
+                    else
+                    {
+                        //todo not enough gold popup?
+                    }
+                }
+                ));
+            }
+
+            squadRecruitWindow = CreatePopupWindow(new Vector2i(100, 100), buttons);
+            windowManager.AddWindow(squadRecruitWindow);
+        }
+
+        public void Draw(RenderWindow window)
+        {
+            window.SetView(camera.GetWorldView());
+            foreach (var tile in tiles)
+            {
+                tile.Draw(window);
+            }
+            
+            window.SetView(camera.GetUiView());
+            windowManager.OnDraw(window);
+        }
+
+        private void EndTurn()
+        {
+            ClosePopupWindows();
+
+            currentPlayerIndex++;
+            if (currentPlayerIndex >= players.Count)
+            {
+                currentPlayerIndex = 0;
+            }
+
+            currentPlayer = players[currentPlayerIndex];
+            currentPlayerIndicator.Background = currentPlayer.Color;
+            TurnStart();
+
+            if (currentPlayer.Type == PlayerType.passive || currentPlayer.Alive == false) EndTurn();
         }
 
         private void ClosePopupWindows()
