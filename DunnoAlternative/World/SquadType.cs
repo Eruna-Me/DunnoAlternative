@@ -13,9 +13,7 @@ namespace DunnoAlternative.World
         public float CostMultiplier { get; set; }
         public Vector2f MoveSpeed { get; set; }
         public float Size { get; set; }
-        public Vector2f AttackSpeed { get; set; }
-        public Vector2f Damage { get; set; }
-        public Vector2f Range { get; set; }
+        public List<Attack> Attacks { get; set; }
         public Vector2f HP { get; set; }
     }
 }

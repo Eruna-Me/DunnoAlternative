@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DunnoAlternative.Battle;
-using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using ErunaInput;
 using ErunaUI;
@@ -132,15 +131,61 @@ namespace DunnoAlternative.World
                     Soldiers = 3,
                     MoveSpeed = new Vector2f(45,55) / Program.LOGIC_UPDATES_PER_SECOND,
                     Size = 16,
-                    AttackSpeed = new Vector2f(2.4f, 2.6f) * Program.LOGIC_UPDATES_PER_SECOND,
+                    Attacks = new List<Attack>{
+                        new Attack{
+                            moveSpeedMultPost = 1.0f,
+                            moveSpeedMultPre = 1.0f,
+                            preparationTime = new Vector2f(1.2f,1.3f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            postTime = new Vector2f(1.2f,1.3f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            damage = new Vector2f(4,16),
+                            initRangeMax = new Vector2f(25,25),
+                            continueRangeMax = new Vector2f(50,50),
+                            Ammo = -1,
+                        },
+                    },   
                     HP = new Vector2f(80, 120),
-                    Damage = new Vector2f(4,16),
-                    Range = new Vector2f(50,50),
                     Max = 0,
                     Cost = 500,
                     CostMultiplier = 1.1f,
+                },
+                new SquadType
+                {
+                    DefaultName = "Too many ninjas",
+                    TypeName = "Ninja",
+                    Texture = new Texture("Content/Textures/Ninja.png"),
+                    Soldiers = 3,
+                    MoveSpeed = new Vector2f(55,65) / Program.LOGIC_UPDATES_PER_SECOND,
+                    Size = 16,
+                    Attacks = new List<Attack>{
+                        new Attack{
+                            moveSpeedMultPost = 1.0f,
+                            moveSpeedMultPre = 1.0f,
+                            preparationTime = new Vector2f(1.0f,1.1f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            postTime = new Vector2f(1.0f,1.1f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            damage = new Vector2f(3,12),
+                            initRangeMax = new Vector2f(25,25),
+                            continueRangeMax = new Vector2f(50,50),
+                            Ammo = -1,
+                        } ,
+                        new Attack{
+                            moveSpeedMultPost = 0.3f,
+                            moveSpeedMultPre = 0.3f,
+                            preparationTime = new Vector2f(0.9f,1.2f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            postTime = new Vector2f(0.5f,0.6f) * Program.LOGIC_UPDATES_PER_SECOND,
+                            damage = new Vector2f(2,8),
+                            initRangeMax = new Vector2f(125,150),
+                            continueRangeMax = new Vector2f(150,175), //multiplier instead?
+                            Ammo = 5,
+                        } ,
+                    },
+                    HP = new Vector2f(50, 75),
+                    Max = 3,
+                    Cost = 600,
+                    CostMultiplier = 1.5f,
                 }
             };
+
+            TurnStart();
         }
 
         public void Update(RenderWindow window)

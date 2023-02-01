@@ -18,27 +18,34 @@ namespace DunnoAlternative.Battle
         private readonly RectangleShape healthBarForeground;
         private readonly RectangleShape healthBarBackground;
 
-        private readonly float moveSpeed;
-        private readonly Vector2f attackSpeed;
-        private readonly Vector2f damage;
-        private readonly float range;
+        private readonly float baseMoveSpeed;
+        private float moveSpeed;
         private float hp;
         private readonly float maxHp;
 
-        private int delay;
+        public List<SoldierAttack> Attacks;
+
+        private float postAttack;
 
         private const int HEALTH_BAR_SIZE_Y = 5;
+
+        SoldierAttack? currentAttack;
+        float preAttack;
 
         public Soldier(SquadType squadType, Vector2f initialPos, Player player)
         {
             SquadType = squadType;
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
-            moveSpeed = SquadType.MoveSpeed.RandomFromRange();
+            baseMoveSpeed = SquadType.MoveSpeed.RandomFromRange();
             Size = squadType.Size;
-            attackSpeed = SquadType.AttackSpeed;
-            damage = SquadType.Damage;
-            range = SquadType.Range.RandomFromRange();
+            Attacks= new List<SoldierAttack>();
+
+            foreach(Attack attack in SquadType.Attacks)
+            {
+                Attacks.Add(new SoldierAttack(attack));
+            }
+
             hp = SquadType.HP.RandomFromRange();
             maxHp = hp;
 
@@ -74,7 +81,8 @@ namespace DunnoAlternative.Battle
         {   
             if (!Alive) return;
 
-            delay--;
+            postAttack--;
+            preAttack--;
 
             var target = FindNearestEnemy(enemies);
 
@@ -82,12 +90,41 @@ namespace DunnoAlternative.Battle
 
             var delta = (target.Pos - Pos);
 
-            if (delay <= 0 && delta.Length() < range + target.Size)
+            if (currentAttack != null)
             {
-                target.Damage(damage.RandomFromRange());
-                
-                delay = (int)attackSpeed.RandomFromRange();
-            } 
+                var attack = currentAttack.Value;
+
+                if (delta.Length() < attack.continueRangeMax + target.Size + Size)
+                {
+                    if (preAttack <= 0)
+                    {
+                        target.Damage(attack.damage.RandomFromRange());
+                        attack.Ammo--;
+                        postAttack = attack.postTime.RandomFromRange();
+                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPost;
+                        currentAttack = null;
+                    }
+                }
+                else
+                {
+                    currentAttack = null;
+                }
+            }
+            else if (postAttack <= 0)
+            {
+                moveSpeed = baseMoveSpeed;
+
+                foreach (var attack in Attacks)
+                {
+                    if (attack.Ammo != 0 && delta.Length() < attack.initRangeMax + target.Size + Size)
+                    {
+                        preAttack = attack.preparationTime.RandomFromRange();
+                        currentAttack = attack;
+                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPre;
+                        break;
+                    }
+                }
+            }
 
             if (delta.Length() < moveSpeed)
             {
