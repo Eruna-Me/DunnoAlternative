@@ -31,7 +31,7 @@ namespace DunnoAlternative.Battle
 
         private readonly BattleTerrain battleTerrain;
 
-        public BattleState(WorldState world, RenderWindow window, Squad[,] attackers, Squad[,] defenders, Player attacker, Player defender)
+        public BattleState(WorldState world, RenderWindow window, Hero[,] attackers, Hero[,] defenders, Player attacker, Player defender)
         {
             this.attackers = ArrangeSoldiers(attackers, attacker, -1);
             this.defenders = ArrangeSoldiers(defenders, defender, 1);
@@ -46,7 +46,7 @@ namespace DunnoAlternative.Battle
             this.world = world;
         }
 
-        private static List<Soldier> ArrangeSoldiers(Squad[,] squads, Player player, float invert)
+        private static List<Soldier> ArrangeSoldiers(Hero[,] squads, Player player, float invert)
         {
             var soldiers = new List<Soldier>();
 
@@ -56,10 +56,10 @@ namespace DunnoAlternative.Battle
                 {
                     if (squads[x, y] == null) continue;
 
-                    for (int n = 0; n < squads[x, y].Soldiers; n++)
+                    for (int n = 0; n < squads[x, y].Squads[0].Soldiers; n++)
                     {
                         soldiers.Add(new Soldier(
-                            squads[x, y].Type,
+                            squads[x, y].Squads[0].Type,
                             new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * x) * invert,
                                         ARMY_DISTANCE_FROM_TOP + y * INITIAL_SQUAD_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y),
                             player

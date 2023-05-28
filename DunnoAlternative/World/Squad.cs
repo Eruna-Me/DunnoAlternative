@@ -8,13 +8,11 @@ namespace DunnoAlternative.World
 {
     public class Squad
     {
-        public string Name { get; set; }
         public SquadType Type { get; set; }
         public int Soldiers { get; set; }
 
-        public Squad(string name, SquadType type)
+        public Squad(SquadType type)
         {
-            Name = name;
             Type = type;
             Soldiers = type.Soldiers;
         }

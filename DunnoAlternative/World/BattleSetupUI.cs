@@ -19,33 +19,33 @@ namespace DunnoAlternative.World
         private readonly TextLabel okButton;
         //private SelectedCommanderSummary selectedCommanderSummary;
 
-        private readonly Squad[,] playerFieldGrid;
-        private readonly List<Squad> unassignedSquads;
+        private readonly Hero[,] playerFieldGrid;
+        private readonly List<Hero> unassignedSquads;
         private readonly StackPanel unassignedSquadsStackPanel;
 
         public int WindowHeight { private get; set; }
         public int WindowWidth { private get; set; }
 
         private readonly Font font;
-        private Squad? selectedSquad;
+        private Hero? selectedSquad;
 
         const int MAX_FORMATIONS = 3;
-        const int SQUADS_PER_FORMATION = 2;
+        const int SQUADS_PER_FORMATION = 1;
 
 
-        public event Action<Squad[,], Player> OnAttackerFinished = delegate { };
-        public event Action<Squad[,], Squad[,], Player> OnSetupFinished = delegate { };
+        public event Action<Hero[,], Player> OnAttackerFinished = delegate { };
+        public event Action<Hero[,], Hero[,], Player> OnSetupFinished = delegate { };
         public event Action OnSetupCanceled = delegate { };
 
-        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Squad> squads, Player defender, Squad[,]? attackers = null)
-        {
+        public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Hero> heros, Player defender, Hero[,]? attackers = null)
+        {      
             mainWindow = window;
             WindowWidth = windowWidth;
             WindowHeight = windowHeight;
             this.font = font;
 
-            playerFieldGrid = new Squad[SQUADS_PER_FORMATION, MAX_FORMATIONS];
-            unassignedSquads = new List<Squad>(squads);
+            playerFieldGrid = new Hero[SQUADS_PER_FORMATION, MAX_FORMATIONS];
+            unassignedSquads = new List<Hero>(heros);
 
             Grid fieldGrid = new()
             {
@@ -151,14 +151,14 @@ namespace DunnoAlternative.World
             Update();
         }
 
-        private void FieldClickEvent(Squad squad, int x, int y)
+        private void FieldClickEvent(Hero squad, int x, int y)
         {
             playerFieldGrid[x, y] = selectedSquad;
 
             selectedSquad = squad;
         }
 
-        private void ListClickEvent(Squad? squad)
+        private void ListClickEvent(Hero? squad)
         {
             if (selectedSquad != null)
             {
@@ -184,7 +184,7 @@ namespace DunnoAlternative.World
         {
             unassignedSquadsStackPanel.Children.Clear();
 
-            foreach (Squad squad in unassignedSquads)
+            foreach (Hero squad in unassignedSquads)
             {
                 Grid squadLabel = new()
                 {
@@ -229,7 +229,7 @@ namespace DunnoAlternative.World
             mainWindow.UpdateSizes();
         }
 
-        private void OkClicked(Squad[,]? attackers, Player defender)
+        private void OkClicked(Hero[,]? attackers, Player defender)
         {
             if(attackers == null)
             {

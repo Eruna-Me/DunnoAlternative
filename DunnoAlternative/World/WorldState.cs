@@ -125,8 +125,7 @@ namespace DunnoAlternative.World
             {
                 new SquadType
                 {
-                    DefaultName = "The Last Samurais",
-                    TypeName = "Samurai",
+                    Name = "Samurai",
                     Texture = new Texture("Content/Textures/Samurai.png"),
                     Soldiers = 3,
                     MoveSpeed = new Vector2f(45,55) / Program.LOGIC_UPDATES_PER_SECOND,
@@ -146,12 +145,10 @@ namespace DunnoAlternative.World
                     HP = new Vector2f(80, 120),
                     Max = 0,
                     Cost = 500,
-                    CostMultiplier = 1.1f,
                 },
                 new SquadType
                 {
-                    DefaultName = "Too many ninjas",
-                    TypeName = "Ninja",
+                    Name = "Ninja",
                     Texture = new Texture("Content/Textures/Ninja.png"),
                     Soldiers = 3,
                     MoveSpeed = new Vector2f(55,65) / Program.LOGIC_UPDATES_PER_SECOND,
@@ -181,7 +178,6 @@ namespace DunnoAlternative.World
                     HP = new Vector2f(50, 75),
                     Max = 3,
                     Cost = 600,
-                    CostMultiplier = 1.5f,
                 }
             };
 
@@ -223,7 +219,7 @@ namespace DunnoAlternative.World
 
                                     battleSetupWindow = new ErunaUI.Window();
 
-                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.UnassignedSquads, tiles[invadedTile.X, invadedTile.Y].Owner);
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, currentPlayer.Heroes, tiles[invadedTile.X, invadedTile.Y].Owner);
                                     battleSetupUI.OnAttackerFinished += AttackerSetupFinished;
                                     battleSetupUI.OnSetupCanceled += ClosePopupWindows;
 
@@ -288,19 +284,15 @@ namespace DunnoAlternative.World
 
             foreach (var type in squadTypes)
             {
-                var count = currentPlayer.UnassignedSquads.Count(x => x.Type.TypeName == type.TypeName);
+                int cost = (int)(type.Cost);
 
-                if (type.Max > 0 && count >= type.Max) continue;
-
-                int cost = (int)(type.Cost * MathF.Pow(type.CostMultiplier, count));
-
-                buttons.Add((type.TypeName + " - $" + cost + " - " + count + "/" + (type.Max == 0 ? "-":type.Max), () =>
+                buttons.Add((type.Name + " - $" + cost + " - ", () =>
                 {
                     if (currentPlayer.Money >= cost)
                     {
                         currentPlayer.Money -= cost;
                         moneyIndicator.TextString = "$" + currentPlayer.Money;
-                        currentPlayer.UnassignedSquads.Add(new Squad(type.DefaultName, type));
+                        currentPlayer.Heroes.Add(new Hero(type.Name, new List<Squad>{ new Squad(type) }));
                         ClosePopupWindows();
                         CreateSquadRecruitWindow();
                     }
@@ -360,13 +352,13 @@ namespace DunnoAlternative.World
             }
         }
 
-        private void AttackerSetupFinished(Squad[,] attackers, Player defender)
+        private void AttackerSetupFinished(Hero[,] attackers, Player defender)
         {
             ClosePopupWindows();
 
             battleSetupWindow = new ErunaUI.Window();
 
-            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, defender.UnassignedSquads, defender, attackers);
+            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 300, 500, defender.Heroes, defender, attackers);
             battleSetupUI.OnSetupFinished += DefenderSetupFinished;
             battleSetupUI.OnSetupCanceled += ClosePopupWindows;
 
@@ -375,7 +367,7 @@ namespace DunnoAlternative.World
             windowManager.AddWindow(battleSetupWindow);
         }
 
-        private void DefenderSetupFinished(Squad[,] attackers, Squad[,] defenders, Player defender)
+        private void DefenderSetupFinished(Hero[,] attackers, Hero[,] defenders, Player defender)
         {
             ClosePopupWindows();
 
