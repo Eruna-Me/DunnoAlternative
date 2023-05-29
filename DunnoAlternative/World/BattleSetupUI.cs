@@ -20,17 +20,17 @@ namespace DunnoAlternative.World
         //private SelectedCommanderSummary selectedCommanderSummary;
 
         private readonly Hero[,] playerFieldGrid;
-        private readonly List<Hero> unassignedSquads;
+        private readonly List<Hero> unassignedHeroes;
         private readonly StackPanel unassignedSquadsStackPanel;
 
         public int WindowHeight { private get; set; }
         public int WindowWidth { private get; set; }
 
         private readonly Font font;
-        private Hero? selectedSquad;
+        private Hero? selectedHero;
 
-        const int MAX_FORMATIONS = 3;
-        const int SQUADS_PER_FORMATION = 1;
+        const int MAX_WIDTH = 3;
+        const int MAX_DEPTH = 1;
 
 
         public event Action<Hero[,], Player> OnAttackerFinished = delegate { };
@@ -44,8 +44,8 @@ namespace DunnoAlternative.World
             WindowHeight = windowHeight;
             this.font = font;
 
-            playerFieldGrid = new Hero[SQUADS_PER_FORMATION, MAX_FORMATIONS];
-            unassignedSquads = new List<Hero>(heros);
+            playerFieldGrid = new Hero[MAX_DEPTH, MAX_WIDTH];
+            unassignedHeroes = new List<Hero>(heros);
 
             Grid fieldGrid = new()
             {
@@ -69,8 +69,8 @@ namespace DunnoAlternative.World
 
             gameGrid = new Grid
             {
-                Columns = GridRow.GenerateRows(SQUADS_PER_FORMATION),
-                Rows = GridRow.GenerateRows(MAX_FORMATIONS),
+                Columns = GridRow.GenerateRows(MAX_DEPTH),
+                Rows = GridRow.GenerateRows(MAX_WIDTH),
             };
 
             okButton = new TextLabel(font)
@@ -103,9 +103,9 @@ namespace DunnoAlternative.World
 
             unassignedSquadsStackPanel.ClickEvent += () => ListClickEvent(null);
 
-            for (int x = 0; x < SQUADS_PER_FORMATION; x++)
+            for (int x = 0; x < MAX_DEPTH; x++)
             {
-                for (int y = 0; y < MAX_FORMATIONS; y++)
+                for (int y = 0; y < MAX_WIDTH; y++)
                 {
                     var commandor = new TextLabel(font)
                     {
@@ -113,9 +113,9 @@ namespace DunnoAlternative.World
                         Background = Color.Green
                     };
 
-                    if (selectedSquad != null)
+                    if (selectedHero != null)
                     {
-                        commandor.TextString = selectedSquad.Name;
+                        commandor.TextString = selectedHero.Name;
                     }
                     else
                     {
@@ -151,25 +151,25 @@ namespace DunnoAlternative.World
             Update();
         }
 
-        private void FieldClickEvent(Hero squad, int x, int y)
+        private void FieldClickEvent(Hero hero, int x, int y)
         {
-            playerFieldGrid[x, y] = selectedSquad;
+            playerFieldGrid[x, y] = selectedHero;
 
-            selectedSquad = squad;
+            selectedHero = hero;
         }
 
         private void ListClickEvent(Hero? squad)
         {
-            if (selectedSquad != null)
+            if (selectedHero != null)
             {
-                unassignedSquads.Add(selectedSquad);
+                unassignedHeroes.Add(selectedHero);
             }
 
-            selectedSquad = squad;
+            selectedHero = squad;
 
             if (squad != null)
             {
-                unassignedSquads.Remove(squad);
+                unassignedHeroes.Remove(squad);
             }
         }
 
@@ -184,7 +184,7 @@ namespace DunnoAlternative.World
         {
             unassignedSquadsStackPanel.Children.Clear();
 
-            foreach (Hero squad in unassignedSquads)
+            foreach (Hero hero in unassignedHeroes)
             {
                 Grid squadLabel = new()
                 {
@@ -195,9 +195,9 @@ namespace DunnoAlternative.World
                     Rows = GridRow.GenerateRows(1),
                     Columns = GridRow.GenerateRows(1)
                 };
-                squadLabel.Children.Add(new Cell(new TextLabel(font) { Color = Color.White, TextAlign = TextAlign.Center, TextGravity = TextGravity.Center, TextString = squad.Name }, 0, 0)); //parse on draw??
+                squadLabel.Children.Add(new Cell(new TextLabel(font) { Color = Color.White, TextAlign = TextAlign.Center, TextGravity = TextGravity.Center, TextString = hero.Name }, 0, 0)); //parse on draw??
 
-                squadLabel.ClickEvent += () => ListClickEvent(squad);
+                squadLabel.ClickEvent += () => ListClickEvent(hero);
 
                 unassignedSquadsStackPanel.Children.Add(squadLabel);
             }

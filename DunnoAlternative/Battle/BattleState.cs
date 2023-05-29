@@ -27,7 +27,8 @@ namespace DunnoAlternative.Battle
         const float ARMY_DISTANCE_FROM_TOP = 100;
         const float INITIAL_SOLDIER_SPACING_Y = 30;
         const float INITIAL_SQUAD_SPACING_X = 100;
-        const float INITIAL_SQUAD_SPACING_Y = 125;
+        const float INITIAL_HERO_SPACING_X = 100;
+        const float INITIAL_HERO_SPACING_Y = 125;
 
         private readonly BattleTerrain battleTerrain;
 
@@ -46,25 +47,28 @@ namespace DunnoAlternative.Battle
             this.world = world;
         }
 
-        private static List<Soldier> ArrangeSoldiers(Hero[,] squads, Player player, float invert)
+        private static List<Soldier> ArrangeSoldiers(Hero[,] heroes, Player player, float invert)
         {
             var soldiers = new List<Soldier>();
 
-            for (int x = 0; x <= squads.GetUpperBound(0); x++)
+            for (int x = 0; x <= heroes.GetUpperBound(0); x++)
             {
-                for (int y = 0; y <= squads.GetUpperBound(1); y++)
+                for (int y = 0; y <= heroes.GetUpperBound(1); y++)
                 {
-                    if (squads[x, y] == null) continue;
+                    if (heroes[x, y] == null) continue;
 
-                    for (int n = 0; n < squads[x, y].Squads[0].Soldiers; n++)
+                    for (int m = 0; m < heroes[x, y].Squads.Count; m++)
                     {
-                        soldiers.Add(new Soldier(
-                            squads[x, y].Squads[0].Type,
-                            new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * x) * invert,
-                                        ARMY_DISTANCE_FROM_TOP + y * INITIAL_SQUAD_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y),
-                            player
-                            )
-                        );
+                        for (int n = 0; n < heroes[x, y].Squads[m].Soldiers; n++)
+                        {
+                            soldiers.Add(new Soldier(
+                                heroes[x, y].Squads[m].Type,
+                                new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * m + INITIAL_HERO_SPACING_X * x) * invert,
+                                            ARMY_DISTANCE_FROM_TOP + y * INITIAL_HERO_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y),
+                                player
+                                )
+                            );
+                        }
                     }
                 }
             }

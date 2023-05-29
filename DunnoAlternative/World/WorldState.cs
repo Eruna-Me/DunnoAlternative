@@ -286,13 +286,13 @@ namespace DunnoAlternative.World
             {
                 int cost = (int)(type.Cost);
 
-                buttons.Add((type.Name + " - $" + cost + " - ", () =>
+                buttons.Add((type.Name + " - $" + cost, () =>
                 {
                     if (currentPlayer.Money >= cost)
                     {
                         currentPlayer.Money -= cost;
                         moneyIndicator.TextString = "$" + currentPlayer.Money;
-                        currentPlayer.Heroes.Add(new Hero(type.Name, new List<Squad>{ new Squad(type) }));
+                        currentPlayer.Heroes.Add(new Hero(type.Name, new List<Squad>{ new Squad(type), new Squad(type) } ));
                         ClosePopupWindows();
                         CreateSquadRecruitWindow();
                     }
