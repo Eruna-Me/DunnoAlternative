@@ -1,9 +1,13 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using Newtonsoft.Json;
+using DunnoAlternative.JSON;
+
 namespace DunnoAlternative.World
 {
     public struct SquadType
     {
+        [JsonConverter(typeof(TextureConverter))]
         public Texture Texture { get; set; }
         public string Name { get; set; }
         public int Soldiers { get; set; }

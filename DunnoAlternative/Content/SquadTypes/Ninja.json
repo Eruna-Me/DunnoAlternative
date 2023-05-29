@@ -1,0 +1,67 @@
+{
+  "Texture": "Content/Textures/Ninja.png",
+  "Name": "Ninja",
+  "Soldiers": 3,
+  "Cost": 600,
+  "MoveSpeed": {
+    "X": 1.8333334,
+    "Y": 2.1666667
+  },
+  "Size": 16.0,
+  "Attacks": [
+    {
+      "moveSpeedMultPre": 1.0,
+      "moveSpeedMultPost": 1.0,
+      "preparationTime": {
+        "X": 30.0,
+        "Y": 33.0
+      },
+      "postTime": {
+        "X": 30.0,
+        "Y": 33.0
+      },
+      "damage": {
+        "X": 3.0,
+        "Y": 12.0
+      },
+      "initRangeMax": {
+        "X": 25.0,
+        "Y": 25.0
+      },
+      "continueRangeMax": {
+        "X": 50.0,
+        "Y": 50.0
+      },
+      "Ammo": -1
+    },
+    {
+      "moveSpeedMultPre": 0.3,
+      "moveSpeedMultPost": 0.3,
+      "preparationTime": {
+        "X": 27.0,
+        "Y": 36.0
+      },
+      "postTime": {
+        "X": 15.0,
+        "Y": 18.0
+      },
+      "damage": {
+        "X": 2.0,
+        "Y": 8.0
+      },
+      "initRangeMax": {
+        "X": 125.0,
+        "Y": 150.0
+      },
+      "continueRangeMax": {
+        "X": 150.0,
+        "Y": 175.0
+      },
+      "Ammo": 5
+    }
+  ],
+  "HP": {
+    "X": 50.0,
+    "Y": 75.0
+  }
+}

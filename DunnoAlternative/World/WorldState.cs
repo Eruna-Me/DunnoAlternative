@@ -8,6 +8,8 @@ using DunnoAlternative.State;
 using ErunaInput;
 using ErunaUI;
 using ErunaUI.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -121,64 +123,11 @@ namespace DunnoAlternative.World
             windowManager = new WindowManager(inputManager);
             windowManager.AddWindow(demoUI);
 
-            squadTypes = new List<SquadType>
+            squadTypes = new List<SquadType>();
+
+            foreach(var file in new DirectoryInfo("Content/Squadtypes").GetFiles())
             {
-                new SquadType
-                {
-                    Name = "Samurai",
-                    Texture = new Texture("Content/Textures/Samurai.png"),
-                    Soldiers = 3,
-                    MoveSpeed = new Vector2f(45,55) / Program.LOGIC_UPDATES_PER_SECOND,
-                    Size = 16,
-                    Attacks = new List<Attack>{
-                        new Attack{
-                            moveSpeedMultPost = 1.0f,
-                            moveSpeedMultPre = 1.0f,
-                            preparationTime = new Vector2f(1.2f,1.3f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            postTime = new Vector2f(1.2f,1.3f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            damage = new Vector2f(4,16),
-                            initRangeMax = new Vector2f(25,25),
-                            continueRangeMax = new Vector2f(50,50),
-                            Ammo = -1,
-                        },
-                    },   
-                    HP = new Vector2f(80, 120),
-                    Max = 0,
-                    Cost = 500,
-                },
-                new SquadType
-                {
-                    Name = "Ninja",
-                    Texture = new Texture("Content/Textures/Ninja.png"),
-                    Soldiers = 3,
-                    MoveSpeed = new Vector2f(55,65) / Program.LOGIC_UPDATES_PER_SECOND,
-                    Size = 16,
-                    Attacks = new List<Attack>{
-                        new Attack{
-                            moveSpeedMultPost = 1.0f,
-                            moveSpeedMultPre = 1.0f,
-                            preparationTime = new Vector2f(1.0f,1.1f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            postTime = new Vector2f(1.0f,1.1f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            damage = new Vector2f(3,12),
-                            initRangeMax = new Vector2f(25,25),
-                            continueRangeMax = new Vector2f(50,50),
-                            Ammo = -1,
-                        } ,
-                        new Attack{
-                            moveSpeedMultPost = 0.3f,
-                            moveSpeedMultPre = 0.3f,
-                            preparationTime = new Vector2f(0.9f,1.2f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            postTime = new Vector2f(0.5f,0.6f) * Program.LOGIC_UPDATES_PER_SECOND,
-                            damage = new Vector2f(2,8),
-                            initRangeMax = new Vector2f(125,150),
-                            continueRangeMax = new Vector2f(150,175), //multiplier instead?
-                            Ammo = 5,
-                        } ,
-                    },
-                    HP = new Vector2f(50, 75),
-                    Max = 3,
-                    Cost = 600,
-                }
+                squadTypes.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<SquadType>());
             };
 
             TurnStart();
