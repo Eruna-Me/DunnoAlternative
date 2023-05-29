@@ -284,15 +284,16 @@ namespace DunnoAlternative.World
 
             foreach (var type in squadTypes)
             {
-                int cost = (int)(type.Cost);
+                var hero = new Hero(new List<Squad> { new Squad(type), new Squad(type) });
+                int cost = hero.Squads.Sum(x => x.Type.Cost );
 
-                buttons.Add((type.Name + " - $" + cost, () =>
+                buttons.Add((hero.Name + " - $" + cost, () =>
                 {
                     if (currentPlayer.Money >= cost)
                     {
                         currentPlayer.Money -= cost;
                         moneyIndicator.TextString = "$" + currentPlayer.Money;
-                        currentPlayer.Heroes.Add(new Hero(type.Name, new List<Squad>{ new Squad(type), new Squad(type) } ));
+                        currentPlayer.Heroes.Add( hero);
                         ClosePopupWindows();
                         CreateSquadRecruitWindow();
                     }

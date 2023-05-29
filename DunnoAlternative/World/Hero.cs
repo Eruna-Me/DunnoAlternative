@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using DunnoAlternative.Shared;
+using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,13 @@ namespace DunnoAlternative.World
         //public float HP { get; set; }
 
         //public Hero(string name, Texture texture, float moveSpeed, float size, List<Attack> attacks, float HP, List<Squad> squads) 
-        public Hero(string name, List<Squad> squads) 
+        public Hero(List<Squad> squads) 
         {
             Squads = squads;
-            Name = name;
+
+            var names = File.ReadAllLines("Content/Namelists/Test.txt");
+
+            Name = names[Global.random.Next(names.Length)];
             //Texture = texture;
             //MoveSpeed = moveSpeed;
            // Size = size;
