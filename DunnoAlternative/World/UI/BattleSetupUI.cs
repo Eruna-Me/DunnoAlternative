@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using System.Reflection.Metadata;
 
-namespace DunnoAlternative.World
+namespace DunnoAlternative.World.UI
 {
     public class BattleSetupUI
     {
@@ -30,13 +30,13 @@ namespace DunnoAlternative.World
 
         private Hero? _selectedHero;
         private Hero? SelectedHero
-        { 
-            get => _selectedHero; 
+        {
+            get => _selectedHero;
             set
             {
                 _selectedHero = value;
                 selectedHeroInfo.ChangeHero(value);
-            } 
+            }
         }
 
         const int MAX_WIDTH = 3;
@@ -48,7 +48,7 @@ namespace DunnoAlternative.World
         public event Action OnSetupCanceled = delegate { };
 
         public BattleSetupUI(Window window, Font font, int windowHeight, int windowWidth, List<Hero> heros, Player defender, Hero[,]? attackers = null)
-        {      
+        {
             mainWindow = window;
             WindowWidth = windowWidth;
             WindowHeight = windowHeight;
@@ -101,7 +101,7 @@ namespace DunnoAlternative.World
             };
 
             cancelButton.ClickEvent += CancelClicked;
-            
+
             okButton.ClickEvent += () => OkClicked(attackers, defender);
 
             gameGrid.Background = Color.Green;
@@ -143,8 +143,8 @@ namespace DunnoAlternative.World
 
             fieldGrid.Children.Add(new Cell(gameGrid, 0, 1, 1, 2));
             fieldGrid.Children.Add(new Cell(unassignedSquadsStackPanel, 1, 0, 2, 2));
-            
-            if(attackers == null)
+
+            if (attackers == null)
             {
                 fieldGrid.Children.Add(new Cell(okButton, 1, 2));
                 fieldGrid.Children.Add(new Cell(cancelButton, 2, 2));
@@ -242,7 +242,7 @@ namespace DunnoAlternative.World
 
         private void OkClicked(Hero[,]? attackers, Player defender)
         {
-            if(attackers == null)
+            if (attackers == null)
             {
                 OnAttackerFinished(playerFieldGrid, defender);
             }

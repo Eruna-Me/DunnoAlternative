@@ -2,7 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-namespace DunnoAlternative.World;
+namespace DunnoAlternative.Shared;
 
 internal class CameraControls : IDisposable
 {

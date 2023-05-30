@@ -2,7 +2,7 @@
 using ErunaUI.Text;
 using SFML.Graphics;
 
-namespace DunnoAlternative.World
+namespace DunnoAlternative.World.UI
 {
     internal class HeroInfoUI : Grid
     {
@@ -50,7 +50,7 @@ namespace DunnoAlternative.World
 
             Background = Color.Magenta;
         }
-        
+
         public void ChangeHero(Hero? hero)
         {
             if (hero == null)
@@ -60,7 +60,7 @@ namespace DunnoAlternative.World
                 troopInfoGridCell.Control = troopInfoGrid;
                 return;
             }
-            
+
             heroNameLabel.TextString = hero.Name;
 
             troopInfoGrid = new Grid

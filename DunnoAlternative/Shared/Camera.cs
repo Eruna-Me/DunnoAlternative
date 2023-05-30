@@ -1,8 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
-using DunnoAlternative.Shared;
 
-namespace DunnoAlternative.World;
+namespace DunnoAlternative.Shared;
 
 internal class Camera : IDisposable
 {
@@ -23,7 +22,7 @@ internal class Camera : IDisposable
         initialSize = new Vector2i((int)window.Size.X, (int)window.Size.Y);
         worldView = new(new FloatRect(0, 0, window.Size.X, window.Size.Y));
         uiView = new(new FloatRect(0, 0, window.Size.X, window.Size.Y));
-    }    
+    }
 
     public Vector2f ScreenToWorld(Vector2i position)
     {
@@ -49,10 +48,10 @@ internal class Camera : IDisposable
     public void Resize(int width, int height)
     {
         worldView.Size = new Vector2f(width, height);
-        
+
         //Use width instead of initalSize.width same for height etc, then you can make the ui scale properly
-        uiView = new View(new FloatRect(0, 0, (float)initialSize.X, (float)initialSize.Y)); 
-        
+        uiView = new View(new FloatRect(0, 0, initialSize.X, initialSize.Y));
+
         worldView.Zoom(zoom);
     }
 
@@ -64,20 +63,20 @@ internal class Camera : IDisposable
     }
 
     public void MoveButtonReleased() => pivotSet = false;
-    
+
     public void Scroll(float delta)
     {
         float deltaZoom = 1 - delta * 0.1f;
-        
+
         var before = ScreenToWorld(mousePosition);
         var pivotWorld = ScreenToWorld(pivotClickStart);
-        
+
         worldView.Zoom(deltaZoom);
         zoom *= deltaZoom;
 
         var after = ScreenToWorld(mousePosition);
 
-        pivotClickStart = WorldToScreen(pivotWorld);;
+        pivotClickStart = WorldToScreen(pivotWorld); ;
         worldView.Move(before - after);
     }
 
