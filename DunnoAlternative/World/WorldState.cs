@@ -327,6 +327,7 @@ namespace DunnoAlternative.World
             if (heroRecruitmentUI != null)
             {
                 heroRecruitmentUI.OnClose -= ClosePopupWindows;
+                heroRecruitmentUI.OnRecruit -= Recruit;
             }
         }
 
