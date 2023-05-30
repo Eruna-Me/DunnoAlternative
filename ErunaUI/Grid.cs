@@ -8,24 +8,24 @@ namespace ErunaUI
 {
     public class Cell
     {
-        public List<int> Rows { get; set; }
-        public List<int> Columns { get; set; }
+        public List<int> YRows { get; set; }
+        public List<int> XRows { get; set; }
         public Control Control { get; set; }
 
-        public Cell(Control control, List<int> columns, List<int> rows)
+        public Cell(Control control, List<int> xRows, List<int> yRows)
         {
             Control = control;
-            Columns = columns;// ?? new List<int> { 0 };
-            Rows = rows;// ?? new List<int> { 0 };
+            XRows = xRows;// ?? new List<int> { 0 };
+            YRows = yRows;// ?? new List<int> { 0 };
         }
 
         /// <param name="width">Number of columns</param>
         /// <param name="height">Number of rows</param>
-        public Cell(Control control, int row, int column, int width = 1, int height = 1) : 
+        public Cell(Control control, int xRow, int yRow, int width = 1, int height = 1) : 
             this(
                 control,
-                Enumerable.Range(row, width).ToList(),
-                Enumerable.Range(column, height).ToList()
+                Enumerable.Range(xRow, width).ToList(),
+                Enumerable.Range(yRow, height).ToList()
                 )
         {
             
@@ -54,14 +54,14 @@ namespace ErunaUI
 
     public class Grid : Control, IContainer
     {
-        public List<GridRow> Rows { get; set; }
-        public List<GridRow> Columns { get; set; }
+        public List<GridRow> YRows { get; set; }
+        public List<GridRow> XRows { get; set; }
         public List<Cell> Children { get; set; }
 
         public Grid()
         {
-            Rows = new List<GridRow>();
-            Columns = new List<GridRow>();
+            YRows = new List<GridRow>();
+            XRows = new List<GridRow>();
             Children = new List<Cell>();
         }
 
@@ -77,27 +77,27 @@ namespace ErunaUI
 
         public void UpdateSizes()
         {
-            UpdateRowSizes(Rows, TrueHeight, PosY);
-            UpdateRowSizes(Columns, TrueWidth, PosX);
+            UpdateRowSizes(YRows, TrueHeight, PosY);
+            UpdateRowSizes(XRows, TrueWidth, PosX);
 
             foreach (Cell child in Children)
             {
                 int tempHeight = 0;
-                foreach (int row in child.Rows)
+                foreach (int row in child.YRows)
                 {
-                    tempHeight += Rows[row].TrueSize;
+                    tempHeight += YRows[row].TrueSize;
                 }
                 child.Control.TrueHeight = tempHeight;
-                child.Control.PosY = Rows[child.Rows.First()].Position;
+                child.Control.PosY = YRows[child.YRows.First()].Position;
 
                 int tempWidth = 0;
 
-                foreach (int column in child.Columns)
+                foreach (int column in child.XRows)
                 {
-                    tempWidth += Columns[column].TrueSize;
+                    tempWidth += XRows[column].TrueSize;
                 }
                 child.Control.TrueWidth = tempWidth;
-                child.Control.PosX = Columns[child.Columns.First()].Position;
+                child.Control.PosX = XRows[child.XRows.First()].Position;
 
                 if (child.Control is IContainer container)
                 {

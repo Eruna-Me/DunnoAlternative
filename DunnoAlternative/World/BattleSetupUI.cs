@@ -63,24 +63,24 @@ namespace DunnoAlternative.World
                 PosY = 0,
                 TrueHeight = WindowHeight,
                 TrueWidth = WindowWidth,
-                Columns = GridRow.GenerateRows(3),
-                Rows = GridRow.GenerateRows(3),
+                XRows = GridRow.GenerateRows(3),
+                YRows = GridRow.GenerateRows(3),
             };
 
-            fieldGrid.Rows[0].Size = 40;
-            fieldGrid.Rows[1].Size = 50;
-            fieldGrid.Rows[2].Size = 10;
+            fieldGrid.YRows[0].Size = 40;
+            fieldGrid.YRows[1].Size = 50;
+            fieldGrid.YRows[2].Size = 10;
 
-            fieldGrid.Columns[0].Size = 50;
-            fieldGrid.Columns[1].Size = 25;
-            fieldGrid.Columns[2].Size = 25;
+            fieldGrid.XRows[0].Size = 50;
+            fieldGrid.XRows[1].Size = 25;
+            fieldGrid.XRows[2].Size = 25;
 
             selectedHeroInfo = new HeroInfoUI(font);
 
             gameGrid = new Grid
             {
-                Columns = GridRow.GenerateRows(MAX_DEPTH),
-                Rows = GridRow.GenerateRows(MAX_WIDTH),
+                XRows = GridRow.GenerateRows(MAX_DEPTH),
+                YRows = GridRow.GenerateRows(MAX_WIDTH),
             };
 
             okButton = new TextLabel(font)
@@ -203,8 +203,8 @@ namespace DunnoAlternative.World
                     Background = Color.Blue,
                     BorderColor = Color.White,
                     BorderThickness = 1,
-                    Rows = GridRow.GenerateRows(1),
-                    Columns = GridRow.GenerateRows(1)
+                    YRows = GridRow.GenerateRows(1),
+                    XRows = GridRow.GenerateRows(1)
                 };
                 squadLabel.Children.Add(new Cell(new TextLabel(font) { Color = Color.White, TextAlign = TextAlign.Center, TextGravity = TextGravity.Center, TextString = hero.Name }, 0, 0)); //parse on draw??
 
@@ -220,7 +220,7 @@ namespace DunnoAlternative.World
         {
             foreach (var child in gameGrid.Children)
             {
-                var field = playerFieldGrid[child.Columns.First(), child.Rows.First()];
+                var field = playerFieldGrid[child.XRows.First(), child.YRows.First()];
                 var Item = (TextLabel)child.Control;
 
                 Item.BorderColor = Color.Black;

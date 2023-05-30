@@ -20,16 +20,16 @@ namespace DunnoAlternative.World
         {
             this.font = font;
 
-            Columns = GridRow.GenerateRows(1);
-            Rows = GridRow.GenerateRows(2);
+            XRows = GridRow.GenerateRows(1);
+            YRows = GridRow.GenerateRows(2);
 
             heroInfoGrid = new Grid();
-            heroInfoGrid.Columns = GridRow.GenerateRows(2);
-            heroInfoGrid.Rows = GridRow.GenerateRows(2);
+            heroInfoGrid.XRows = GridRow.GenerateRows(2);
+            heroInfoGrid.YRows = GridRow.GenerateRows(2);
 
 
-            heroInfoGrid.Columns[0].Size = 1;
-            heroInfoGrid.Columns[1].Size = 2;
+            heroInfoGrid.XRows[0].Size = 1;
+            heroInfoGrid.XRows[1].Size = 2;
 
             heroNameLabel = new TextLabel(font)
             {
@@ -65,8 +65,8 @@ namespace DunnoAlternative.World
 
             troopInfoGrid = new Grid
             {
-                Rows = GridRow.GenerateRows(hero.Squads.Count),
-                Columns = GridRow.GenerateRows(1)
+                YRows = GridRow.GenerateRows(hero.Squads.Count),
+                XRows = GridRow.GenerateRows(1)
             };
 
             troopInfoGridCell.Control = troopInfoGrid;
@@ -84,8 +84,8 @@ namespace DunnoAlternative.World
     {
         public TroopInfoRow(Font font, SquadType squadType) : base()
         {
-            Columns = GridRow.GenerateRows(2);
-            Rows = GridRow.GenerateRows(1);
+            XRows = GridRow.GenerateRows(2);
+            YRows = GridRow.GenerateRows(1);
 
             var label = new TextLabel(font)
             {
@@ -95,8 +95,8 @@ namespace DunnoAlternative.World
                 Color = Color.Black,
             };
 
-            Columns[0].Size = 1;
-            Columns[1].Size = 3;
+            XRows[0].Size = 1;
+            XRows[1].Size = 3;
 
             var texture = new ErunaUI.Texture(squadType.Texture);
 

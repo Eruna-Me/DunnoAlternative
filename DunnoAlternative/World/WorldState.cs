@@ -99,8 +99,8 @@ namespace DunnoAlternative.World
 
             var demoGrid = new Grid
             {
-                Rows = GridRow.GenerateRows(2),
-                Columns = GridRow.GenerateRows(2),
+                YRows = GridRow.GenerateRows(2),
+                XRows = GridRow.GenerateRows(2),
                 TrueHeight = 100,
                 TrueWidth = 800,
                 PosX = 0,
