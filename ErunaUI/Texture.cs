@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ErunaUI
 {
-    class Texture
+    public class Texture : Control
     {
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using DunnoAlternative.World;
-using ErunaUI;
+//using ErunaUI;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;

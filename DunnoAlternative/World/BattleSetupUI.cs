@@ -17,7 +17,7 @@ namespace DunnoAlternative.World
 
         private readonly Grid gameGrid;
         private readonly TextLabel okButton;
-        //private SelectedCommanderSummary selectedCommanderSummary;
+        private HeroInfoUI selectedHeroInfo;
 
         private readonly Hero[,] playerFieldGrid;
         private readonly List<Hero> unassignedHeroes;
@@ -27,7 +27,17 @@ namespace DunnoAlternative.World
         public int WindowWidth { private get; set; }
 
         private readonly Font font;
-        private Hero? selectedHero;
+
+        private Hero? _selectedHero;
+        private Hero? SelectedHero
+        { 
+            get => _selectedHero; 
+            set
+            {
+                _selectedHero = value;
+                selectedHeroInfo.ChangeHero(value);
+            } 
+        }
 
         const int MAX_WIDTH = 3;
         const int MAX_DEPTH = 1;
@@ -65,7 +75,7 @@ namespace DunnoAlternative.World
             fieldGrid.Columns[1].Size = 25;
             fieldGrid.Columns[2].Size = 25;
 
-            //selectedCommanderSummary = new SelectedCommanderSummary(font);
+            selectedHeroInfo = new HeroInfoUI(font);
 
             gameGrid = new Grid
             {
@@ -113,9 +123,9 @@ namespace DunnoAlternative.World
                         Background = Color.Green
                     };
 
-                    if (selectedHero != null)
+                    if (SelectedHero != null)
                     {
-                        commandor.TextString = selectedHero.Name;
+                        commandor.TextString = SelectedHero.Name;
                     }
                     else
                     {
@@ -143,7 +153,8 @@ namespace DunnoAlternative.World
             {
                 fieldGrid.Children.Add(new Cell(okButton, 1, 2, 2, 1));
             }
-            //fieldGrid.Children.Add(new Cell(selectedCommanderSummary, 0, 0));
+
+            fieldGrid.Children.Add(new Cell(selectedHeroInfo, 0, 0));
 
             mainWindow.Child = fieldGrid;
             mainWindow.UpdateSizes();
@@ -153,19 +164,19 @@ namespace DunnoAlternative.World
 
         private void FieldClickEvent(Hero hero, int x, int y)
         {
-            playerFieldGrid[x, y] = selectedHero;
+            playerFieldGrid[x, y] = SelectedHero;
 
-            selectedHero = hero;
+            SelectedHero = hero;
         }
 
         private void ListClickEvent(Hero? squad)
         {
-            if (selectedHero != null)
+            if (SelectedHero != null)
             {
-                unassignedHeroes.Add(selectedHero);
+                unassignedHeroes.Add(SelectedHero);
             }
 
-            selectedHero = squad;
+            SelectedHero = squad;
 
             if (squad != null)
             {
