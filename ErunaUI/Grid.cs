@@ -1,8 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 namespace ErunaUI
 {
@@ -19,8 +17,8 @@ namespace ErunaUI
             YRows = yRows;// ?? new List<int> { 0 };
         }
 
-        /// <param name="width">Number of columns</param>
-        /// <param name="height">Number of rows</param>
+        /// <param name="width">Number of xRows</param>
+        /// <param name="height">Number of yRows</param>
         public Cell(Control control, int xRow, int yRow, int width = 1, int height = 1) : 
             this(
                 control,
