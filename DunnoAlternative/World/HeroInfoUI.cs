@@ -27,6 +27,10 @@ namespace DunnoAlternative.World
             heroInfoGrid.Columns = GridRow.GenerateRows(2);
             heroInfoGrid.Rows = GridRow.GenerateRows(2);
 
+
+            heroInfoGrid.Columns[0].Size = 1;
+            heroInfoGrid.Columns[1].Size = 2;
+
             heroNameLabel = new TextLabel(font)
             {
                 TextString = "",
@@ -91,7 +95,10 @@ namespace DunnoAlternative.World
                 Color = Color.Black,
             };
 
-            var texture = new ErunaUI.Texture();
+            Columns[0].Size = 1;
+            Columns[1].Size = 3;
+
+            var texture = new ErunaUI.Texture(squadType.Texture);
 
             Children.Add(new Cell(texture, 0, 0));
             Children.Add(new Cell(label, 1, 0));
