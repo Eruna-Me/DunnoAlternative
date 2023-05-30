@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using static SFML.Window.Mouse;
 
 namespace DunnoAlternative.World
 {
@@ -31,10 +32,11 @@ namespace DunnoAlternative.World
 
         private ErunaUI.Window? buildWindow;
         private ErunaUI.Window? invasionWindow;
-        private ErunaUI.Window? squadRecruitWindow;
+        private ErunaUI.Window? heroRecruitWindow;
         private ErunaUI.Window? battleSetupWindow;
 
         private BattleSetupUI? battleSetupUI;
+        private HeroRecruitmentUI? heroRecruitmentUI;
         private readonly RenderWindow renderWindow;
 
         const int POPUP_WINDOW_WIDTH = 250;
@@ -50,6 +52,9 @@ namespace DunnoAlternative.World
         private readonly Camera camera; //TODO: dispose
         private readonly CameraControls controls; //TODO: dispose
 
+        const int BASE_INCOME = 500;
+        List<Hero> recruitableHeroes;
+
         public WorldState(RenderWindow window, StateManager stateManager)
         {
             inputManager = new InputManager();
@@ -58,7 +63,7 @@ namespace DunnoAlternative.World
 
             renderWindow = window;
 
-            
+
             this.stateManager = stateManager;
 
             players = new List<Player> {
@@ -111,7 +116,7 @@ namespace DunnoAlternative.World
 
             demoGrid.Children.Add(new Cell(currentPlayerIndicator, new List<int> { 1 }, new List<int> { 0 }));
             demoGrid.Children.Add(new Cell(moneyIndicator, new List<int> { 1 }, new List<int> { 1 }));
-            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0,1 }));
+            demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0, 1 }));
 
             btnRecruitSquad.ClickEvent += CreateSquadRecruitWindow;
             currentPlayerIndicator.ClickEvent += EndTurn;
@@ -127,7 +132,7 @@ namespace DunnoAlternative.World
 
             squadTypes = new List<SquadType>();
 
-            foreach(var file in new DirectoryInfo("Content/Squadtypes").GetFiles())
+            foreach (var file in new DirectoryInfo("Content/Squadtypes").GetFiles())
             {
                 squadTypes.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<SquadType>());
             };
@@ -202,21 +207,27 @@ namespace DunnoAlternative.World
             stateManager.Pop();
         }
 
-        const int BASE_INCOME = 500;
 
         private void TurnStart()
         {
             currentPlayer.Money += BASE_INCOME;
 
-            foreach(var tile in tiles)
+            foreach (var tile in tiles)
             {
-                if(tile.Owner == currentPlayer)
+                if (tile.Owner == currentPlayer)
                 {
                     currentPlayer.Money += tile.Income;
                 }
             }
 
             moneyIndicator.TextString = "$" + currentPlayer.Money;
+
+            recruitableHeroes = new List<Hero>();
+            
+            foreach (var type in squadTypes)
+            {
+                recruitableHeroes.Add(new Hero(new List<Squad> { new Squad(type), new Squad(type) }));
+            }
         }
 
         private void CheckPlayerAlive(Player player)
@@ -231,33 +242,43 @@ namespace DunnoAlternative.World
 
         private void CreateSquadRecruitWindow()
         {
-            var buttons = new List<(string, Action)>();
 
-            foreach (var type in squadTypes)
+            ClosePopupWindows();
+
+            heroRecruitWindow = new ErunaUI.Window();
+
+            heroRecruitmentUI = new HeroRecruitmentUI(heroRecruitWindow, font, 400, 600, recruitableHeroes.ToList());
+            heroRecruitmentUI.OnRecruit += Recruit;
+            heroRecruitmentUI.OnClose += ClosePopupWindows;
+
+            heroRecruitWindow.UpdateSizes();
+
+            windowManager.AddWindow(heroRecruitWindow);
+        }
+
+        private void Recruit(Hero? hero)
+        {
+            ClosePopupWindows();
+
+            if(hero != null)
             {
-                var hero = new Hero(new List<Squad> { new Squad(type), new Squad(type) });
-                int cost = hero.Squads.Sum(x => x.Type.Cost );
+                int cost = hero.Squads.Sum(x => x.Type.Cost);
 
-                buttons.Add((hero.Name + " - $" + cost, () =>
+                if (currentPlayer.Money >= cost)
                 {
-                    if (currentPlayer.Money >= cost)
-                    {
-                        currentPlayer.Money -= cost;
-                        moneyIndicator.TextString = "$" + currentPlayer.Money;
-                        currentPlayer.Heroes.Add( hero);
-                        ClosePopupWindows();
-                        CreateSquadRecruitWindow();
-                    }
-                    else
-                    {
-                        //todo not enough gold popup?
-                    }
+                    currentPlayer.Money -= cost;
+                    moneyIndicator.TextString = "$" + currentPlayer.Money;
+                    currentPlayer.Heroes.Add(hero);
+                    recruitableHeroes.Remove(hero);
                 }
-                ));
+                else
+                {
+                    //todo not enough gold popup?
+                }
+                
             }
 
-            squadRecruitWindow = CreatePopupWindow(new Vector2i(100, 100), buttons);
-            windowManager.AddWindow(squadRecruitWindow);
+            CreateSquadRecruitWindow();
         }
 
         public void Draw(RenderWindow window)
@@ -293,7 +314,7 @@ namespace DunnoAlternative.World
         {
             CloseWindow(buildWindow);
             CloseWindow(invasionWindow);
-            CloseWindow(squadRecruitWindow);
+            CloseWindow(heroRecruitWindow);
             CloseWindow(battleSetupWindow);
 
             if (battleSetupUI != null)
@@ -301,6 +322,11 @@ namespace DunnoAlternative.World
                 battleSetupUI.OnSetupCanceled -= ClosePopupWindows;
                 battleSetupUI.OnAttackerFinished -= AttackerSetupFinished;
                 battleSetupUI.OnSetupFinished -= DefenderSetupFinished;
+            }
+
+            if (heroRecruitmentUI != null)
+            {
+                heroRecruitmentUI.OnClose -= ClosePopupWindows;
             }
         }
 
