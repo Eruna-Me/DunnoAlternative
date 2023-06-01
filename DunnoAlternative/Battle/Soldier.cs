@@ -89,7 +89,7 @@ namespace DunnoAlternative.Battle
             if (target == null) return;
 
             var delta = (target.Pos - Pos);
-
+            
             if (currentAttack != null)
             {
                 var attack = currentAttack.Value;
@@ -101,7 +101,19 @@ namespace DunnoAlternative.Battle
                         target.Damage(attack.damage.RandomFromRange());
                         attack.Ammo--;
                         postAttack = attack.postTime.RandomFromRange();
-                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPost;
+
+
+                        int skirmish;
+                        if (attack.skirmish && delta.Length() < attack.initRangeMax)
+                        {
+                            skirmish = -1;
+                        }
+                        else
+                        {
+                            skirmish = 1;
+                        }
+
+                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPost * skirmish;
                         currentAttack = null;
                     }
                 }
@@ -120,7 +132,18 @@ namespace DunnoAlternative.Battle
                     {
                         preAttack = attack.preparationTime.RandomFromRange();
                         currentAttack = attack;
-                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPre;
+
+                        int skirmish;
+                        if (attack.skirmish)
+                        {
+                            skirmish = -1;
+                        }
+                        else
+                        {
+                            skirmish = 1;
+                        }
+
+                        moveSpeed = baseMoveSpeed * attack.moveSpeedMultPre * skirmish;
                         break;
                     }
                 }

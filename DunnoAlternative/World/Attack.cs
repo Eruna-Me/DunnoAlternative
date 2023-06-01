@@ -23,6 +23,6 @@ namespace DunnoAlternative.World
         public int Ammo; //negative for infinite ammo
 
         //min range
-        //skirmish distance
+        public bool skirmish;
     }
 }
