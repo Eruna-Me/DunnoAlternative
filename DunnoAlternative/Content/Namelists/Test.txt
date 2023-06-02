@@ -21,3 +21,4 @@ Medusa
 Mahou Shoujo
 Kitsune
 Tanuki
+StrInt
