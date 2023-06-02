@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DunnoAlternative.Battle
 {
-    public struct SoldierAttack
+    public class SoldierAttack
     {
         public float moveSpeedMultPre;
         public float moveSpeedMultPost;
