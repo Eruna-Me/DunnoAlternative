@@ -22,7 +22,9 @@ namespace DunnoAlternative.Battle
         public float continueRangeMax;
 
         public int Ammo; //negative for infinite ammo
-        public bool skirmish;
+        public float skirmishMaxRange;
+        public float skirmishNoAttackRange;
+        public float skirmishMinRange;
 
         public SoldierAttack(Attack baseAttack)
         {
@@ -36,10 +38,11 @@ namespace DunnoAlternative.Battle
             continueRangeMax = baseAttack.continueRangeMax.RandomFromRange();
 
             Ammo = baseAttack.Ammo;
-            skirmish = baseAttack.skirmish;
+            skirmishMaxRange = baseAttack.skirmishMaxRange;
+            skirmishNoAttackRange = baseAttack.skirmishNoAttackRange;
+            skirmishMinRange = baseAttack.skirmishMinRange;
         }
 
         //min range
-        //skirmish distance
     }
 }

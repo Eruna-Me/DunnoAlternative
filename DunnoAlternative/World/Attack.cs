@@ -22,7 +22,8 @@ namespace DunnoAlternative.World
 
         public int Ammo; //negative for infinite ammo
 
-        //min range
-        public bool skirmish;
+        public float skirmishMaxRange;
+        public float skirmishNoAttackRange;
+        public float skirmishMinRange;
     }
 }

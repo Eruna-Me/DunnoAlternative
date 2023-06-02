@@ -104,7 +104,10 @@ namespace DunnoAlternative.Battle
 
 
                         int skirmish;
-                        if (attack.skirmish && delta.Length() < attack.initRangeMax)
+                        if (attack.skirmishMaxRange != 0 && 
+                            delta.Length() < attack.skirmishMaxRange &&
+                            delta.Length() > attack.skirmishMinRange &&
+                            delta.Length() < attack.initRangeMax)
                         {
                             skirmish = -1;
                         }
@@ -130,11 +133,21 @@ namespace DunnoAlternative.Battle
                 {
                     if (attack.Ammo != 0 && delta.Length() < attack.initRangeMax + target.Size + Size)
                     {
+                        if(delta.Length() < attack.skirmishNoAttackRange &&
+                           delta.Length() > attack.skirmishMinRange)
+                        {
+                            moveSpeed *= -1;
+                            break;
+                        }
+
                         preAttack = attack.preparationTime.RandomFromRange();
                         currentAttack = attack;
 
                         int skirmish;
-                        if (attack.skirmish)
+                        if (attack.skirmishMaxRange != 0 &&
+                            delta.Length() < attack.skirmishMaxRange &&
+                            delta.Length() > attack.skirmishMinRange &&
+                            delta.Length() < attack.initRangeMax)
                         {
                             skirmish = -1;
                         }

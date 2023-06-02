@@ -4,8 +4,8 @@
   "Soldiers": 3,
   "Cost": 600,
   "MoveSpeed": {
-    "X": 1.8333334,
-    "Y": 2.1666667
+    "X": 2,
+    "Y": 2.5
   },
   "Size": 16.0,
   "Attacks": [
@@ -35,11 +35,11 @@
       "Ammo": -1
     },
     {
-      "moveSpeedMultPre": 0.3,
-      "moveSpeedMultPost": 0.3,
+      "moveSpeedMultPre": 0.5,
+      "moveSpeedMultPost": 0.5,
       "preparationTime": {
-        "X": 27.0,
-        "Y": 36.0
+        "X": 23.0,
+        "Y": 30.0
       },
       "postTime": {
         "X": 15.0,
@@ -50,15 +50,17 @@
         "Y": 8.0
       },
       "initRangeMax": {
-        "X": 125.0,
-        "Y": 150.0
-      },
-      "continueRangeMax": {
         "X": 150.0,
         "Y": 175.0
       },
+      "continueRangeMax": {
+        "X": 200.0,
+        "Y": 225.0
+      },
       "Ammo": 10,
-      "skirmish": true
+      "skirmishMinRange": 25,
+      "skirmishMaxRange": 150,
+      "skirmishNoAttackRange": 125
     }
   ],
   "HP": {
