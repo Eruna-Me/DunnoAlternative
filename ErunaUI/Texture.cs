@@ -8,20 +8,25 @@ namespace ErunaUI
 {
     public class Texture : Control
     {
-        private readonly Sprite sprite;
+        public Sprite Sprite { get; set; }
 
         public Texture(SFML.Graphics.Texture texture)
         {
-            sprite = new Sprite(texture);
+            Sprite = new Sprite(texture);
+        }
+
+        public Texture()
+        {
+            Sprite = new Sprite();
         }
 
         public override void OnDraw(RenderWindow window)
         {
             base.OnDraw(window);
 
-            sprite.Position = new Vector2f(PosX, PosY);
+            Sprite.Position = new Vector2f(PosX, PosY);
 
-            window.Draw(sprite);
+            window.Draw(Sprite);
         }
     }
 }

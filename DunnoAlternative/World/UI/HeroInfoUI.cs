@@ -13,8 +13,8 @@ namespace DunnoAlternative.World.UI
         Cell troopInfoGridCell;
 
         TextLabel heroNameLabel;
-        //TextLabel heroClassLabel;
-        //hero texture
+        TextLabel heroClassLabel;
+        ErunaUI.Texture heroTexture;
 
         public HeroInfoUI(Font font) : base()
         {
@@ -39,7 +39,19 @@ namespace DunnoAlternative.World.UI
                 Color = Color.Black,
             };
 
+            heroClassLabel = new TextLabel(font)
+            {
+                TextString = "",
+                TextAlign = TextAlign.Left,
+                TextGravity = TextGravity.Center,
+                Color = Color.Black,
+            };
+
+            heroTexture = new ErunaUI.Texture();
+
+            heroInfoGrid.Children.Add(new Cell(heroTexture, 0, 0, 1, 2));
             heroInfoGrid.Children.Add(new Cell(heroNameLabel, 1, 0));
+            heroInfoGrid.Children.Add(new Cell(heroClassLabel, 1, 1));
 
             troopInfoGrid = new Grid();
             troopInfoGridCell = new Cell(troopInfoGrid, 0, 1);
@@ -56,12 +68,16 @@ namespace DunnoAlternative.World.UI
             if (hero == null)
             {
                 heroNameLabel.TextString = string.Empty;
+                heroClassLabel.TextString = string.Empty;
+                heroTexture.Sprite = new Sprite();
                 troopInfoGrid = new Grid();
                 troopInfoGridCell.Control = troopInfoGrid;
                 return;
             }
 
             heroNameLabel.TextString = hero.Name;
+            heroClassLabel.TextString = hero.heroClass.Name;
+            heroTexture.Sprite = new Sprite(hero.texture);
 
             troopInfoGrid = new Grid
             {

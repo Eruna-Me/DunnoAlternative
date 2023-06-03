@@ -1,0 +1,62 @@
+{
+  "Name": "Rogue",
+  "Cost": 300,
+  "MoveSpeed": 2.8,
+  "Size": 16.0,
+  "Attacks": [
+    {
+      "moveSpeedMultPre": 1.0,
+      "moveSpeedMultPost": 1.0,
+      "preparationTime": {
+        "X": 20.0,
+        "Y": 23.0
+      },
+      "postTime": {
+        "X": 20.0,
+        "Y": 23.0
+      },
+      "damage": {
+        "X": 3.0,
+        "Y": 20.0
+      },
+      "initRangeMax": {
+        "X": 25.0,
+        "Y": 25.0
+      },
+      "continueRangeMax": {
+        "X": 50.0,
+        "Y": 50.0
+      },
+      "Ammo": -1
+    },
+    {
+      "moveSpeedMultPre": 0.75,
+      "moveSpeedMultPost": 0.75,
+      "preparationTime": {
+        "X": 20.0,
+        "Y": 20.0
+      },
+      "postTime": {
+        "X": 12.0,
+        "Y": 12.0
+      },
+      "damage": {
+        "X": 4.0,
+        "Y": 16.0
+      },
+      "initRangeMax": {
+        "X": 150.0,
+        "Y": 175.0
+      },
+      "continueRangeMax": {
+        "X": 200.0,
+        "Y": 225.0
+      },
+      "Ammo": 6,
+      "skirmishMinRange": 25,
+      "skirmishMaxRange": 150,
+      "skirmishNoAttackRange": 125
+    }
+  ],
+  "HP": 90
+}

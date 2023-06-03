@@ -7,7 +7,6 @@ namespace DunnoAlternative.Battle
 {
     internal class Soldier : IDrawable
     {
-        public SquadType SquadType { get; }
         public Vector2f Pos { get; set; }
         public Vector2f Target { get; set; }
 
@@ -34,19 +33,49 @@ namespace DunnoAlternative.Battle
 
         public Soldier(SquadType squadType, Vector2f initialPos, Player player)
         {
-            SquadType = squadType;
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
-            baseMoveSpeed = SquadType.MoveSpeed.RandomFromRange();
+            baseMoveSpeed = squadType.MoveSpeed.RandomFromRange();
             Size = squadType.Size;
             Attacks= new List<SoldierAttack>();
 
-            foreach(Attack attack in SquadType.Attacks)
+            foreach(Attack attack in squadType.Attacks)
             {
                 Attacks.Add(new SoldierAttack(attack));
             }
 
-            hp = SquadType.HP.RandomFromRange();
+            hp = squadType.HP.RandomFromRange();
+            maxHp = hp;
+
+            Alive = true;
+
+            healthBarForeground = new RectangleShape
+            {
+                Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
+                FillColor = player.Color,
+            };
+
+            healthBarBackground = new RectangleShape
+            {
+                Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
+                FillColor = Color.Black,
+            };
+        }
+
+        public Soldier(HeroClass heroClass, Texture texture, Vector2f initialPos, Player player)
+        {
+            Pos = initialPos;
+            sprite = new Sprite(texture);
+            baseMoveSpeed = heroClass.MoveSpeed;
+            Size = heroClass.Size;
+            Attacks = new List<SoldierAttack>();
+
+            foreach (Attack attack in heroClass.Attacks)
+            {
+                Attacks.Add(new SoldierAttack(attack));
+            }
+
+            hp = heroClass.HP;
             maxHp = hp;
 
             Alive = true;

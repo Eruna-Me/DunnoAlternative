@@ -47,6 +47,7 @@ namespace DunnoAlternative.World
         Vector2i invadedTile;
 
         private readonly List<SquadType> squadTypes;
+        private readonly List<HeroClass> heroClasses;
 
         private readonly StateManager stateManager;
         private readonly Camera camera; //TODO: dispose
@@ -132,9 +133,16 @@ namespace DunnoAlternative.World
 
             squadTypes = new List<SquadType>();
 
-            foreach (var file in new DirectoryInfo("Content/Squadtypes").GetFiles())
+            foreach (var file in new DirectoryInfo("Content/SquadTypes").GetFiles())
             {
                 squadTypes.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<SquadType>());
+            };
+
+            heroClasses = new List<HeroClass>();
+
+            foreach (var file in new DirectoryInfo("Content/HeroClasses").GetFiles())
+            {
+                heroClasses.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<HeroClass>());
             };
 
             TurnStart();
@@ -223,10 +231,19 @@ namespace DunnoAlternative.World
             moneyIndicator.TextString = "$" + currentPlayer.Money;
 
             recruitableHeroes = new List<Hero>();
-            
-            foreach (var type in squadTypes)
+
+            const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
+
+            for (int i = 0; i < GENERIC_HEROES_RECRUITABLE_EACH_TURN; i++)
             {
-                recruitableHeroes.Add(new Hero(new List<Squad> { new Squad(type), new Squad(type) }));
+                recruitableHeroes.Add(
+                    new Hero(
+                        heroClasses[Global.random.Next(0, heroClasses.Count)],
+                        squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
+                        new List<Squad> { 
+                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]), 
+                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)]) 
+                        }));
             }
         }
 

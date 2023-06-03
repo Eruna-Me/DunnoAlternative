@@ -57,6 +57,15 @@ namespace DunnoAlternative.Battle
                 {
                     if (heroes[x, y] == null) continue;
 
+                    soldiers.Add(new Soldier(
+                        heroes[x, y].heroClass,
+                        heroes[x, y].texture,
+                        new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * -1 + INITIAL_HERO_SPACING_X * x) * invert,
+                                     ARMY_DISTANCE_FROM_TOP + y * INITIAL_HERO_SPACING_Y + 1 * INITIAL_SOLDIER_SPACING_Y),
+                        player
+                        )
+                    );
+
                     for (int m = 0; m < heroes[x, y].Squads.Count; m++)
                     {
                         for (int n = 0; n < heroes[x, y].Squads[m].Soldiers; n++)

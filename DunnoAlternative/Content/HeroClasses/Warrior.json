@@ -1,0 +1,35 @@
+{
+  "Name": "Samurai",
+  "Soldiers": 3,
+  "Cost": 200,
+  "moveSpeed": 1.9,
+  "Size": 16.0,
+  "Attacks": [
+    {
+      "moveSpeedMultPre": 1.0,
+      "moveSpeedMultPost": 1.0,
+      "preparationTime": {
+        "X": 36.0,
+        "Y": 39.0
+      },
+      "postTime": {
+        "X": 36.0,
+        "Y": 39.0
+      },
+      "damage": {
+        "X": 6.0,
+        "Y": 24.0
+      },
+      "initRangeMax": {
+        "X": 25.0,
+        "Y": 25.0
+      },
+      "continueRangeMax": {
+        "X": 50.0,
+        "Y": 50.0
+      },
+      "Ammo": -1
+    }
+  ],
+  "HP": 180
+}
