@@ -56,6 +56,8 @@ namespace DunnoAlternative.World
         const int BASE_INCOME = 500;
         List<Hero> recruitableHeroes;
 
+        const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
+
         public WorldState(RenderWindow window, StateManager stateManager)
         {
             inputManager = new InputManager();
@@ -231,8 +233,6 @@ namespace DunnoAlternative.World
             moneyIndicator.TextString = "$" + currentPlayer.Money;
 
             recruitableHeroes = new List<Hero>();
-
-            const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
 
             for (int i = 0; i < GENERIC_HEROES_RECRUITABLE_EACH_TURN; i++)
             {
