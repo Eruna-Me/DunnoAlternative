@@ -24,7 +24,12 @@ namespace ErunaUI
         {
             base.OnDraw(window);
 
-            Sprite.Position = new Vector2f(PosX, PosY);
+            if(Sprite.Texture != null)
+            {
+                var scale = Math.Min((float)TrueWidth / Sprite.Texture.Size.X, (float)TrueHeight / Sprite.Texture.Size.Y);
+                Sprite.Scale = new Vector2f(scale, scale);
+                Sprite.Position = new Vector2f(PosX, PosY);
+            }
 
             window.Draw(Sprite);
         }
