@@ -58,6 +58,7 @@ namespace DunnoAlternative.World
         List<Hero> recruitableHeroes;
 
         const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
+        const int INITIAL_HEROES_TEST = 3;
 
         public WorldState(RenderWindow window, StateManager stateManager)
         {
@@ -147,6 +148,21 @@ namespace DunnoAlternative.World
             {
                 heroClasses.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<HeroClass>());
             };
+
+            foreach (Player player in players)
+            {
+                for (int i = 0; i < INITIAL_HEROES_TEST; i++)
+                {
+                    player.Heroes.Add(
+                        new Hero(
+                            heroClasses[Global.random.Next(0, heroClasses.Count)],
+                            squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
+                            new List<Squad> {
+                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]),
+                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)])
+                            }));
+                }
+            }
 
             TurnStart();
         }
