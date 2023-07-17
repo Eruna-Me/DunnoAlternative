@@ -60,6 +60,8 @@ namespace DunnoAlternative.World
         const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
         const int INITIAL_HEROES_TEST = 3;
 
+        Player attacker;
+
         public WorldState(RenderWindow window, StateManager stateManager)
         {
             inputManager = new InputManager();
@@ -124,7 +126,14 @@ namespace DunnoAlternative.World
             demoGrid.Children.Add(new Cell(btnRecruitSquad, new List<int> { 0 }, new List<int> { 0, 1 }));
 
             btnRecruitSquad.ClickEvent += CreateSquadRecruitWindow;
-            currentPlayerIndicator.ClickEvent += EndTurn;
+
+            currentPlayerIndicator.ClickEvent += () => 
+            {
+                if (currentPlayer.Type == PlayerType.human && !windowManager.Windows.Contains(battleSetupWindow))
+                {
+                    EndTurn();
+                }
+            };
 
             var demoUI = new ErunaUI.Window
             {
@@ -178,7 +187,7 @@ namespace DunnoAlternative.World
                 EndTurn();
             }
 
-            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false))
+            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false) && !windowManager.Windows.Contains(battleSetupWindow))
             {
                 ClosePopupWindows();
 
@@ -231,7 +240,7 @@ namespace DunnoAlternative.World
             {
                 var oldOwner = tiles[invadedTile.X, invadedTile.Y].Owner;
 
-                tiles[invadedTile.X, invadedTile.Y].ChangeOwner(currentPlayer);
+                tiles[invadedTile.X, invadedTile.Y].ChangeOwner(attacker);
 
                 CheckPlayerAlive(oldOwner);
             }
@@ -441,6 +450,8 @@ namespace DunnoAlternative.World
 
         private void AttackerSetupFinished(Hero[,] attackers, Player defender)
         {
+            attacker = currentPlayer;
+
             ClosePopupWindows();
 
             var empty = true;
