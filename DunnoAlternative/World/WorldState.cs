@@ -25,7 +25,6 @@ namespace DunnoAlternative.World
         private readonly Tile[,] tiles;
         private readonly List<Player> players;
         private readonly WindowManager windowManager;
-        private readonly InputManager inputManager;
         private int currentPlayerIndex = 0;
         private Player currentPlayer;
         private readonly Control currentPlayerIndicator;
@@ -64,7 +63,6 @@ namespace DunnoAlternative.World
 
         public WorldState(RenderWindow window, StateManager stateManager)
         {
-            inputManager = new InputManager();
             camera = new Camera(window);
             controls = new CameraControls(window, camera);
 
@@ -141,7 +139,7 @@ namespace DunnoAlternative.World
             };
             demoUI.UpdateSizes();
 
-            windowManager = new WindowManager(inputManager);
+            windowManager = new WindowManager(stateManager.inputManager);
             windowManager.AddWindow(demoUI);
 
             squadTypes = new List<SquadType>();
@@ -178,7 +176,6 @@ namespace DunnoAlternative.World
 
         public void Update(RenderWindow window)
         {
-            inputManager.Update(window);
             windowManager.Update();
             battleSetupUI?.Update();
 
@@ -187,11 +184,12 @@ namespace DunnoAlternative.World
                 EndTurn();
             }
 
-            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false) && !(windowManager.Windows.Contains(battleSetupWindow) && attacker == currentPlayer))
+            if (stateManager.inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false) && !(windowManager.Windows.Contains(battleSetupWindow) && attacker == currentPlayer))
             {
                 ClosePopupWindows();
 
-                invadedTile = MousePosToTile(inputManager.MousePos);
+                invadedTile = MousePosToTile(stateManager.inputManager.MousePos); 
+
                 if (TileExists(invadedTile))
                 {
                     if (tiles[invadedTile.X, invadedTile.Y].Owner == currentPlayer)
@@ -201,7 +199,7 @@ namespace DunnoAlternative.World
                             ("Upgrade Castle", ()=>{ }),
                         };
 
-                        buildWindow = CreatePopupWindow(inputManager.MousePos, buttons);
+                        buildWindow = CreatePopupWindow(stateManager.inputManager.MousePos, buttons);
                         windowManager.AddWindow(buildWindow);
                     }
                     else
@@ -226,13 +224,14 @@ namespace DunnoAlternative.World
                                 }),
                             };
 
-                            invasionWindow = CreatePopupWindow(inputManager.MousePos, buttons);
+                            invasionWindow = CreatePopupWindow(stateManager.inputManager.MousePos, buttons);
                             windowManager.AddWindow(invasionWindow);
                         }
                     }
                 }
             }
         }
+
 
         public void BattleResult(bool attackerWon)
         {
@@ -415,7 +414,7 @@ namespace DunnoAlternative.World
 
                     if (availableHeroes.Count == 0) break;
 
-                    var nextHero = availableHeroes[Global.random.Next(0, availableHeroes.Count())];
+                    var nextHero = availableHeroes[Global.random.Next(0, availableHeroes.Count)];
 
                     if(Global.random.NextSingle() <= deployChance)
                     {
