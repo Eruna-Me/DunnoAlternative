@@ -129,7 +129,7 @@ namespace DunnoAlternative.World
 
             currentPlayerIndicator.ClickEvent += () => 
             {
-                if (currentPlayer.Type == PlayerType.human && !windowManager.Windows.Contains(battleSetupWindow))
+                if (currentPlayer.Type == PlayerType.human && !(windowManager.Windows.Contains(battleSetupWindow) && attacker == currentPlayer))
                 {
                     EndTurn();
                 }
@@ -187,7 +187,7 @@ namespace DunnoAlternative.World
                 EndTurn();
             }
 
-            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false) && !windowManager.Windows.Contains(battleSetupWindow))
+            if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false) && !(windowManager.Windows.Contains(battleSetupWindow) && attacker == currentPlayer))
             {
                 ClosePopupWindows();
 
@@ -299,6 +299,7 @@ namespace DunnoAlternative.World
 
         private void CreateSquadRecruitWindow()
         {
+            if (windowManager.Windows.Contains(battleSetupWindow) && attacker == currentPlayer) return;
 
             ClosePopupWindows();
 
