@@ -13,7 +13,7 @@ namespace DunnoAlternative.World
     {
         public List<Squad> Squads { get; }
         public string Name { get; set; }
-
+        public bool Deployed { get; set; }
         public HeroClass heroClass { get; set; }
         public Texture texture { get; set; }
 

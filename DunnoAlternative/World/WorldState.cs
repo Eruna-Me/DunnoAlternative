@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using DunnoAlternative.Battle;
@@ -156,6 +157,11 @@ namespace DunnoAlternative.World
             windowManager.Update();
             battleSetupUI?.Update();
 
+            if (currentPlayer.Type == PlayerType.CPU && !windowManager.Windows.Contains(battleSetupWindow))
+            {
+                EndTurn();
+            }
+
             if (inputManager.MouseButtonState[Mouse.Button.Left] == (ButtonState.Release, false))
             {
                 ClosePopupWindows();
@@ -220,6 +226,8 @@ namespace DunnoAlternative.World
 
         private void TurnStart()
         {
+            ClosePopupWindows();
+
             currentPlayer.Money += BASE_INCOME;
 
             foreach (var tile in tiles)
@@ -228,6 +236,11 @@ namespace DunnoAlternative.World
                 {
                     currentPlayer.Money += tile.Income;
                 }
+            }
+
+            foreach( var hero in currentPlayer.Heroes)
+            {
+                hero.Deployed = false;
             }
 
             moneyIndicator.TextString = "$" + currentPlayer.Money;
@@ -240,9 +253,9 @@ namespace DunnoAlternative.World
                     new Hero(
                         heroClasses[Global.random.Next(0, heroClasses.Count)],
                         squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
-                        new List<Squad> { 
-                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]), 
-                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)]) 
+                        new List<Squad> {
+                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]),
+                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)])
                         }));
             }
         }
@@ -253,6 +266,8 @@ namespace DunnoAlternative.World
             {
                 if (tile.Owner == player) break;
             }
+
+            if (player.Type == PlayerType.human) return; //TODO remove this line
 
             player.Alive = false;
         }
@@ -277,7 +292,7 @@ namespace DunnoAlternative.World
         {
             ClosePopupWindows();
 
-            if(hero != null)
+            if (hero != null)
             {
                 int cost = hero.Squads.Sum(x => x.Type.Cost);
 
@@ -292,7 +307,7 @@ namespace DunnoAlternative.World
                 {
                     //todo not enough gold popup?
                 }
-                
+
             }
 
             CreateSquadRecruitWindow();
@@ -305,7 +320,7 @@ namespace DunnoAlternative.World
             {
                 tile.Draw(window);
             }
-            
+
             window.SetView(camera.GetUiView());
             windowManager.OnDraw(window);
         }
@@ -325,6 +340,66 @@ namespace DunnoAlternative.World
             TurnStart();
 
             if (currentPlayer.Type == PlayerType.passive || currentPlayer.Alive == false) EndTurn();
+
+            if (currentPlayer.Type == PlayerType.CPU) CPUTurn();
+        }
+
+        private void CPUTurn()
+        {
+            for (int n = 0; n < 10; n++)
+            {
+                Recruit(recruitableHeroes[Global.random.Next(0, recruitableHeroes.Count)]);
+            }
+
+            List<Vector2i> possibleTargets = new();
+
+            for (int x = 0; x < tiles.GetLength(0); x++)
+            {
+                for (int y = 0; y < tiles.GetLength(1); y++)
+                {
+                    var target = new Vector2i(x, y);
+
+                    if (tiles[x, y].Owner != currentPlayer && CheckNeighbors(target))
+                    {
+                        possibleTargets.Add(target);
+                    }
+                }
+            }
+
+            if (possibleTargets.Count == 0) return; //Probably shouldn't happen
+
+            invadedTile = possibleTargets[Global.random.Next(0, possibleTargets.Count)];
+
+            AttackerSetupFinished(CPUDeploy(currentPlayer), tiles[invadedTile.X, invadedTile.Y].Owner);
+        }
+
+        Hero[,] CPUDeploy(Player player)
+        {
+            float targetDeploy = player.Heroes.Count / 2.0f;
+            float fields = BattleSetupUI.MAX_DEPTH * BattleSetupUI.MAX_WIDTH;
+            float deployChance = targetDeploy / fields;
+
+            Hero[,] returnValue = new Hero[BattleSetupUI.MAX_DEPTH,BattleSetupUI.MAX_WIDTH];
+
+            for(int x = 0; x < BattleSetupUI.MAX_DEPTH; x++)
+            {
+                for(int y = 0; y < BattleSetupUI.MAX_WIDTH; y++)
+                {
+                    var availableHeroes = player.Heroes.Where((x) => x.Deployed == false).ToList();
+
+                    if (availableHeroes.Count == 0) break;
+
+                    var nextHero = availableHeroes[Global.random.Next(0, availableHeroes.Count())];
+
+                    if(Global.random.NextSingle() <= deployChance)
+                    {
+                        returnValue[x, y] = nextHero;
+                        nextHero.Deployed = true;
+                    }
+                }
+            }
+
+            return returnValue;
         }
 
         private void ClosePopupWindows()
@@ -352,15 +427,31 @@ namespace DunnoAlternative.World
         {
             ClosePopupWindows();
 
-            battleSetupWindow = new ErunaUI.Window();
+            var empty = true;
 
-            battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, defender.Heroes, defender, attackers);
-            battleSetupUI.OnSetupFinished += DefenderSetupFinished;
-            battleSetupUI.OnSetupCanceled += ClosePopupWindows;
+            foreach (var attacker in attackers)
+            {
+                if (attacker != null) empty = false;
+            }
 
-            battleSetupWindow.UpdateSizes();
+            if (empty) return;
 
-            windowManager.AddWindow(battleSetupWindow);
+            if (defender.Type == PlayerType.human)
+            {
+                battleSetupWindow = new ErunaUI.Window();
+
+                battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, defender.Heroes, defender, attackers);
+                battleSetupUI.OnSetupFinished += DefenderSetupFinished;
+                battleSetupUI.OnSetupCanceled += ClosePopupWindows;
+
+                battleSetupWindow.UpdateSizes();
+
+                windowManager.AddWindow(battleSetupWindow);
+            }
+            else
+            {
+                DefenderSetupFinished(attackers, CPUDeploy(defender), defender);
+            }
         }
 
         private void DefenderSetupFinished(Hero[,] attackers, Hero[,] defenders, Player defender)

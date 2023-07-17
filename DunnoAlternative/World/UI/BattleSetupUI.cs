@@ -39,8 +39,8 @@ namespace DunnoAlternative.World.UI
             }
         }
 
-        const int MAX_WIDTH = 3;
-        const int MAX_DEPTH = 1;
+        public const int MAX_WIDTH = 3;
+        public const int MAX_DEPTH = 1;
 
 
         public event Action<Hero[,], Player> OnAttackerFinished = delegate { };
