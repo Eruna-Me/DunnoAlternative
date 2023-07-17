@@ -216,7 +216,7 @@ namespace DunnoAlternative.World
 
                                     battleSetupWindow = new ErunaUI.Window();
 
-                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, currentPlayer.Heroes, tiles[invadedTile.X, invadedTile.Y].Owner);
+                                    battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, currentPlayer.Heroes.Where(x => x.Deployed == false).ToList(), tiles[invadedTile.X, invadedTile.Y].Owner);
                                     battleSetupUI.OnAttackerFinished += AttackerSetupFinished;
                                     battleSetupUI.OnSetupCanceled += ClosePopupWindows;
 
@@ -467,7 +467,7 @@ namespace DunnoAlternative.World
             {
                 battleSetupWindow = new ErunaUI.Window();
 
-                battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, defender.Heroes, defender, attackers);
+                battleSetupUI = new BattleSetupUI(battleSetupWindow, font, 400, 600, defender.Heroes.Where(x => x.Deployed == false).ToList(), defender, attackers);
                 battleSetupUI.OnSetupFinished += DefenderSetupFinished;
                 battleSetupUI.OnSetupCanceled += ClosePopupWindows;
 

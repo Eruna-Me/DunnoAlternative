@@ -242,6 +242,14 @@ namespace DunnoAlternative.World.UI
 
         private void OkClicked(Hero[,]? attackers, Player defender)
         {
+            foreach(Hero hero in playerFieldGrid)
+            {
+                if(hero != null)
+                {
+                    hero.Deployed = true;
+                }
+            }
+
             if (attackers == null)
             {
                 OnAttackerFinished(playerFieldGrid, defender);
