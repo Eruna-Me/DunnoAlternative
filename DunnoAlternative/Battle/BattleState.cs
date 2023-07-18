@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using DunnoAlternative.Battle.Particles;
 using DunnoAlternative.Shared;
 using DunnoAlternative.State;
 using DunnoAlternative.World;
@@ -14,6 +15,7 @@ namespace DunnoAlternative.Battle
     public class BattleState : IState
     {
         private readonly WorldState world;
+        private readonly ParticleSystem particleSystem;
 
         readonly List<Soldier> attackers;
         readonly List<Soldier> defenders;
@@ -34,6 +36,8 @@ namespace DunnoAlternative.Battle
 
         public BattleState(WorldState world, RenderWindow window, Hero[,] attackers, Hero[,] defenders, Player attacker, Player defender)
         {
+            particleSystem = new ParticleSystem(1000);
+
             this.attackers = ArrangeSoldiers(attackers, attacker, -1);
             this.defenders = ArrangeSoldiers(defenders, defender, 1);
             soldiers = new List<Soldier>(this.attackers);
@@ -47,7 +51,7 @@ namespace DunnoAlternative.Battle
             this.world = world;
         }
 
-        private static List<Soldier> ArrangeSoldiers(Hero[,] heroes, Player player, float invert)
+        private List<Soldier> ArrangeSoldiers(Hero[,] heroes, Player player, float invert)
         {
             var soldiers = new List<Soldier>();
 
@@ -58,6 +62,7 @@ namespace DunnoAlternative.Battle
                     if (heroes[x, y] == null) continue;
 
                     soldiers.Add(new Soldier(
+                        particleSystem,
                         heroes[x, y].heroClass,
                         heroes[x, y].texture,
                         new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * -1 + INITIAL_HERO_SPACING_X * x) * invert,
@@ -71,6 +76,7 @@ namespace DunnoAlternative.Battle
                         for (int n = 0; n < heroes[x, y].Squads[m].Soldiers; n++)
                         {
                             soldiers.Add(new Soldier(
+                                particleSystem,
                                 heroes[x, y].Squads[m].Type,
                                 new Vector2f(CENTER_X + (ARMY_DISTANCE_FROM_CENTER_X + INITIAL_SQUAD_SPACING_X * m + INITIAL_HERO_SPACING_X * x) * invert,
                                             ARMY_DISTANCE_FROM_TOP + y * INITIAL_HERO_SPACING_Y + n * INITIAL_SOLDIER_SPACING_Y),
@@ -95,6 +101,8 @@ namespace DunnoAlternative.Battle
             {
                 soldier.Draw(window);
             }
+
+            particleSystem.Draw(window);
 
             window.SetView(camera.GetUiView());
             //windowManager.OnDraw(window);
@@ -133,6 +141,8 @@ namespace DunnoAlternative.Battle
             {
                 world.BattleResult(true);
             }
+
+            particleSystem.Update(1.0f / Program.LOGIC_UPDATES_PER_SECOND);
         }
 
         private static void HandleCollision(Soldier a, Soldier b)

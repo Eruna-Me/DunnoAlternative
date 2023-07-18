@@ -1,5 +1,7 @@
-﻿using DunnoAlternative.Shared;
+﻿using DunnoAlternative.Battle.Particles;
+using DunnoAlternative.Shared;
 using DunnoAlternative.World;
+using Newtonsoft.Json.Linq;
 using SFML.Graphics;
 using SFML.System;
 
@@ -7,6 +9,8 @@ namespace DunnoAlternative.Battle
 {
     internal class Soldier : IDrawable
     {
+        private readonly ParticleSystem particleSystem;
+
         public Vector2f Pos { get; set; }
         public Vector2f Target { get; set; }
 
@@ -31,8 +35,12 @@ namespace DunnoAlternative.Battle
         SoldierAttack? currentAttack;
         float preAttack;
 
-        public Soldier(SquadType squadType, Vector2f initialPos, Player player)
+        ParticleProp? bloodParticle;
+
+        public Soldier(ParticleSystem particleSystem, SquadType squadType, Vector2f initialPos, Player player)
         {
+            this.particleSystem = particleSystem;
+
             Pos = initialPos;
             sprite = new Sprite(squadType.Texture);
             baseMoveSpeed = squadType.MoveSpeed.RandomFromRange();
@@ -60,10 +68,17 @@ namespace DunnoAlternative.Battle
                 Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
                 FillColor = Color.Black,
             };
+
+            if (squadType.BloodParticle != string.Empty)
+            {
+                bloodParticle = JObject.Parse(File.ReadAllText(squadType.BloodParticle)).ToObject<ParticleProp>();
+            }
         }
 
-        public Soldier(HeroClass heroClass, Texture texture, Vector2f initialPos, Player player)
+        public Soldier(ParticleSystem particleSystem, HeroClass heroClass, Texture texture, Vector2f initialPos, Player player)
         {
+            this.particleSystem = particleSystem;
+
             Pos = initialPos;
             sprite = new Sprite(texture);
             baseMoveSpeed = heroClass.MoveSpeed;
@@ -91,6 +106,11 @@ namespace DunnoAlternative.Battle
                 Size = new Vector2f(sprite.Texture.Size.X, HEALTH_BAR_SIZE_Y),
                 FillColor = Color.Black,
             };
+
+            if (heroClass.BloodParticle != string.Empty)
+            {
+                bloodParticle = JObject.Parse(File.ReadAllText(heroClass.BloodParticle)).ToObject<ParticleProp>();
+            }
         }
 
         public void Draw(RenderWindow window)
@@ -202,6 +222,12 @@ namespace DunnoAlternative.Battle
         public void Damage(float damage)
         {
             hp -= damage;
+
+            if (bloodParticle != null)
+            {
+                bloodParticle.Position = Pos + new Vector2f(sprite.Texture.Size.X * 0.5f, sprite.Texture.Size.Y * 0.5f);
+                particleSystem.Emit(bloodParticle, (int)(damage / maxHp * 100));
+            }
 
             if(hp < 0)
             {

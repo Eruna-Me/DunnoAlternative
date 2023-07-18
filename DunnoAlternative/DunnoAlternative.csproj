@@ -36,6 +36,9 @@
     <None Update="Content\HeroClasses\Warrior.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Content\Particles\Blood.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Content\SquadTypes\Ninja.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -54,6 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Content\Particles\" />
     <Folder Include="Content\Textures\" />
   </ItemGroup>
 

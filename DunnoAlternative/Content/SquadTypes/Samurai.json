@@ -38,5 +38,6 @@
   "HP": {
     "X": 80.0,
     "Y": 120.0
-  }
+  },
+  "BloodParticle": "Content/Particles/Blood.json"
 }

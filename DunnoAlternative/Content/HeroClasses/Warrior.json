@@ -31,5 +31,6 @@
       "Ammo": -1
     }
   ],
-  "HP": 180
+  "HP": 180,
+  "BloodParticle": "Content/Particles/Blood.json"
 }

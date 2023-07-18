@@ -58,5 +58,6 @@
       "skirmishNoAttackRange": 125
     }
   ],
-  "HP": 90
+  "HP": 90,
+  "BloodParticle": "Content/Particles/Blood.json"
 }

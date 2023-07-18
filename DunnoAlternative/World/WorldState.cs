@@ -398,7 +398,7 @@ namespace DunnoAlternative.World
             AttackerSetupFinished(CPUDeploy(currentPlayer), tiles[invadedTile.X, invadedTile.Y].Owner);
         }
 
-        Hero[,] CPUDeploy(Player player)
+        private Hero[,] CPUDeploy(Player player)
         {
             float targetDeploy = player.Heroes.Count / 2.0f;
             float fields = BattleSetupUI.MAX_DEPTH * BattleSetupUI.MAX_WIDTH;

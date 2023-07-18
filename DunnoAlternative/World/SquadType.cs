@@ -2,6 +2,7 @@
 using SFML.System;
 using Newtonsoft.Json;
 using DunnoAlternative.JSON;
+using DunnoAlternative.Battle.Particles;
 
 namespace DunnoAlternative.World
 {
@@ -17,5 +18,6 @@ namespace DunnoAlternative.World
         public float Size { get; set; }
         public List<Attack> Attacks { get; set; }
         public Vector2f HP { get; set; }
+        public string BloodParticle { get; set; }
     }
 }
