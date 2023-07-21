@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DunnoAlternative.World
 {
-    internal class Tile : IDrawable
+    public class Tile : IDrawable
     {
         public static readonly Vector2f Size = new(128.0f, 128.0f);
         public Player Owner { get; set; }

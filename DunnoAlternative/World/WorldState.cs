@@ -57,31 +57,21 @@ namespace DunnoAlternative.World
         List<Hero> recruitableHeroes;
 
         const int GENERIC_HEROES_RECRUITABLE_EACH_TURN = 3;
-        const int INITIAL_HEROES_TEST = 3;
 
         Player attacker;
 
-        public WorldState(RenderWindow window, StateManager stateManager)
+        public WorldState(RenderWindow window, StateManager stateManager, List<Player> players, Tile[,] tiles)
         {
             camera = new Camera(window);
             controls = new CameraControls(window, camera);
 
             renderWindow = window;
 
-
             this.stateManager = stateManager;
 
-            players = new List<Player> {
-                new Player(PlayerType.human, "Humanland", Color.Blue),
-                new Player(PlayerType.CPU, "Robofactory", Color.Red),
-                new Player(PlayerType.CPU, "Bob5", Color.Magenta),
-                new Player(PlayerType.passive, "Rebels", Color.Yellow),
-            };
+            this.players = players;
 
-            tiles = new Tile[,] {
-                { new Tile(font, "First Tile", players[0], 300, new Vector2f(0,0)), new Tile(font, "Second Tile", players[1], 300, new Vector2f(0,Tile.Size.Y)), },
-                { new Tile(font, "Other Tile", players[2], 300, new Vector2f(Tile.Size.X,0)), new Tile(font, "Rebel Mountain", players[3], 300, new Vector2f(Tile.Size.X,Tile.Size.Y)), },
-            };
+            this.tiles = tiles;
 
             currentPlayer = players[currentPlayerIndex];
 
@@ -155,21 +145,6 @@ namespace DunnoAlternative.World
             {
                 heroClasses.Add(JObject.Parse(File.ReadAllText(file.FullName)).ToObject<HeroClass>());
             };
-
-            foreach (Player player in players)
-            {
-                for (int i = 0; i < INITIAL_HEROES_TEST; i++)
-                {
-                    player.Heroes.Add(
-                        new Hero(
-                            heroClasses[Global.random.Next(0, heroClasses.Count)],
-                            squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
-                            new List<Squad> {
-                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]),
-                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)])
-                            }));
-                }
-            }
 
             TurnStart();
         }
