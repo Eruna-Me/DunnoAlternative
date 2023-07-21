@@ -21,7 +21,7 @@ namespace DunnoAlternative.World
         {
             Squads = squads;
 
-            var names = File.ReadAllLines("Content/Namelists/Test.txt");
+            var names = File.ReadAllLines("Content/Namelists/HeroesTest.txt");
 
             this.texture = texture;
             this.heroClass = heroClass;

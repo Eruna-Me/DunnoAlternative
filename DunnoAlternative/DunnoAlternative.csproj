@@ -8,11 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Content\Namelists\Test.txt" />
+    <None Remove="Content\Namelists\FactionNamesTest.txt" />
+    <None Remove="Content\Namelists\HeroesTest.txt" />
+    <None Remove="Content\Namelists\TilesDefault.txt" />
+    <None Remove="Content\Namelists\TilesMountain.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Content\Namelists\Test.txt">
+    <Content Include="Content\Namelists\FactionNamesTest.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Namelists\TilesDefault.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Namelists\TilesMountain.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Namelists\HeroesTest.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

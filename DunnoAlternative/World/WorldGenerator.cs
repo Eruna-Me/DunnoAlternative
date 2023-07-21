@@ -20,18 +20,21 @@ namespace DunnoAlternative.World
             //all tiles that are passible should be connected to eachother orthogonically.
             //then fill it with players 
 
+            var factionNames = File.ReadAllLines("Content/Namelists/FactionNamesTest.txt");
+            var mountainTileNames = File.ReadAllLines("Content/Namelists/TilesMountain.txt");
+            var tileNames = File.ReadAllLines("Content/Namelists/TilesDefault.txt");
+
             players = new List<Player> {
-                new Player(PlayerType.human, "Humanland", Color.Blue),
-                new Player(PlayerType.CPU, "Robofactory", Color.Red),
-                new Player(PlayerType.CPU, "Bob5", Color.Magenta),
-                new Player(PlayerType.passive, "Rebels", Color.Yellow),
+                new Player(PlayerType.human, factionNames[Global.random.Next(factionNames.Length)], Color.Blue),
+                new Player(PlayerType.CPU, factionNames[Global.random.Next(factionNames.Length)], Color.Red),
+                new Player(PlayerType.CPU, factionNames[Global.random.Next(factionNames.Length)], Color.Magenta),
+                new Player(PlayerType.passive, factionNames[Global.random.Next(factionNames.Length)], Color.Yellow),
             };
 
             tiles = new Tile[,] {
-                { new Tile(font, "First Tile", players[0], 300, new Vector2f(0,0)), new Tile(font, "Second Tile", players[1], 300, new Vector2f(0,Tile.Size.Y)), },
-                { new Tile(font, "Other Tile", players[2], 300, new Vector2f(Tile.Size.X,0)), new Tile(font, "Rebel Mountain", players[3], 300, new Vector2f(Tile.Size.X,Tile.Size.Y)), },
+                { new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[0], 300, new Vector2f(0,0)), new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[1], 300, new Vector2f(0,Tile.Size.Y)), },
+                { new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[2], 300, new Vector2f(Tile.Size.X,0)), new Tile(font, mountainTileNames[Global.random.Next(mountainTileNames.Length)], players[3], 300, new Vector2f(Tile.Size.X,Tile.Size.Y)), },
             };
-
 
             var squadTypes = new List<SquadType>();
 
