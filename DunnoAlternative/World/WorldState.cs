@@ -250,11 +250,11 @@ namespace DunnoAlternative.World
             {
                 recruitableHeroes.Add(
                     new Hero(
-                        heroClasses[Global.random.Next(0, heroClasses.Count)],
-                        squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
+                        heroClasses.GetRandom(),
+                        squadTypes.GetRandom().Texture,
                         new List<Squad> {
-                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]),
-                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)])
+                            new Squad(squadTypes.GetRandom()),
+                            new Squad(squadTypes.GetRandom())
                         }));
             }
         }
@@ -348,7 +348,7 @@ namespace DunnoAlternative.World
         {
             for (int n = 0; n < 10; n++)
             {
-                Recruit(recruitableHeroes[Global.random.Next(0, recruitableHeroes.Count)]);
+                Recruit(recruitableHeroes.GetRandom());
             }
 
             List<Vector2i> possibleTargets = new();
@@ -368,7 +368,7 @@ namespace DunnoAlternative.World
 
             if (possibleTargets.Count == 0) return; //Probably shouldn't happen
 
-            invadedTile = possibleTargets[Global.random.Next(0, possibleTargets.Count)];
+            invadedTile = possibleTargets.GetRandom();
 
             AttackerSetupFinished(CPUDeploy(currentPlayer), tiles[invadedTile.X, invadedTile.Y].Owner);
         }
@@ -389,7 +389,7 @@ namespace DunnoAlternative.World
 
                     if (availableHeroes.Count == 0) break;
 
-                    var nextHero = availableHeroes[Global.random.Next(0, availableHeroes.Count)];
+                    var nextHero = availableHeroes.GetRandom();
 
                     if(Global.random.NextSingle() <= deployChance)
                     {

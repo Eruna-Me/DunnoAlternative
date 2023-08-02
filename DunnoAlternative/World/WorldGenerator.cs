@@ -37,7 +37,7 @@ namespace DunnoAlternative.World
 
                     if(x == 0 && y == 0)
                     {
-                        newPlayer = new Player(PlayerType.human, factionNames[Global.random.Next(factionNames.Length)], Color.Blue);
+                        newPlayer = new Player(PlayerType.human, factionNames.GetRandom(), Color.Blue);
                     }
                     else
                     {
@@ -52,11 +52,11 @@ namespace DunnoAlternative.World
                         }
 
                         var color = new Color((byte)Global.random.Next(256), (byte)Global.random.Next(256), (byte)Global.random.Next(256));
-                        newPlayer = new Player(playerType, factionNames[Global.random.Next(factionNames.Length)], color);
+                        newPlayer = new Player(playerType, factionNames.GetRandom(), color);
                     }
 
                     players.Add(newPlayer);
-                    tiles[x, y] = new Tile(font, tileNames[Global.random.Next(tileNames.Length)], newPlayer, TILE_SIZE, new Vector2f(Tile.Size.X * x, Tile.Size.Y * y));
+                    tiles[x, y] = new Tile(font, tileNames.GetRandom(), newPlayer, TILE_SIZE, new Vector2f(Tile.Size.X * x, Tile.Size.Y * y));
                 }
             }
 
@@ -80,11 +80,11 @@ namespace DunnoAlternative.World
                 {
                     player.Heroes.Add(
                         new Hero(
-                            heroClasses[Global.random.Next(0, heroClasses.Count)],
-                            squadTypes[Global.random.Next(0, squadTypes.Count)].Texture,
+                            heroClasses.GetRandom(),
+                            squadTypes.GetRandom().Texture,
                             new List<Squad> {
-                            new Squad(squadTypes[Global.random.Next(0,squadTypes.Count)]),
-                            new Squad(squadTypes[Global.random.Next(0, squadTypes.Count)])
+                            new Squad(squadTypes.GetRandom()),
+                            new Squad(squadTypes.GetRandom())
                             }));
                 }
             }

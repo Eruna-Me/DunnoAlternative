@@ -26,7 +26,7 @@ namespace DunnoAlternative.World
             this.texture = texture;
             this.heroClass = heroClass;
 
-            Name = names[Global.random.Next(names.Length)];
+            Name = names.GetRandom();
         }
     }
 }
