@@ -27,7 +27,7 @@ namespace DunnoAlternative
             window.SetFramerateLimit(FPS);
 
             var stateManager = new StateManager();
-            WorldGenerator worldGenerator = new WorldGenerator(new WorldSettings());
+            WorldGenerator worldGenerator = new WorldGenerator(new WorldSettings() { height = 4, width = 4});
             stateManager.Push(new WorldState(window, stateManager, worldGenerator.players, worldGenerator.tiles));
 
             while (window.IsOpen)

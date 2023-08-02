@@ -13,6 +13,8 @@ namespace DunnoAlternative.World
         public Tile[,] tiles;
         const int INITIAL_HEROES = 3;
 
+        private const int TILE_SIZE = 300;
+
         public WorldGenerator(WorldSettings settings)
         {
             //generate a world with different terrain types: plains, forests, hills, mountains, water etc
@@ -24,17 +26,39 @@ namespace DunnoAlternative.World
             var mountainTileNames = File.ReadAllLines("Content/Namelists/TilesMountain.txt");
             var tileNames = File.ReadAllLines("Content/Namelists/TilesDefault.txt");
 
-            players = new List<Player> {
-                new Player(PlayerType.human, factionNames[Global.random.Next(factionNames.Length)], Color.Blue),
-                new Player(PlayerType.CPU, factionNames[Global.random.Next(factionNames.Length)], Color.Red),
-                new Player(PlayerType.CPU, factionNames[Global.random.Next(factionNames.Length)], Color.Magenta),
-                new Player(PlayerType.passive, factionNames[Global.random.Next(factionNames.Length)], Color.Yellow),
-            };
+            players = new List<Player>();
+            tiles = new Tile[settings.width, settings.height];
 
-            tiles = new Tile[,] {
-                { new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[0], 300, new Vector2f(0,0)), new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[1], 300, new Vector2f(0,Tile.Size.Y)), },
-                { new Tile(font, tileNames[Global.random.Next(tileNames.Length)], players[2], 300, new Vector2f(Tile.Size.X,0)), new Tile(font, mountainTileNames[Global.random.Next(mountainTileNames.Length)], players[3], 300, new Vector2f(Tile.Size.X,Tile.Size.Y)), },
-            };
+            for ( int x=0; x < settings.width; x++ )
+            {
+                for(int y=0; y < settings.height; y++ )
+                {
+                    Player newPlayer;
+
+                    if(x == 0 && y == 0)
+                    {
+                        newPlayer = new Player(PlayerType.human, factionNames[Global.random.Next(factionNames.Length)], Color.Blue);
+                    }
+                    else
+                    {
+                        PlayerType playerType;
+                        if(Global.random.NextSingle() > settings.proportionPassive)
+                        {
+                            playerType = PlayerType.CPU;
+                        }
+                        else
+                        {
+                            playerType = PlayerType.passive;
+                        }
+
+                        var color = new Color((byte)Global.random.Next(256), (byte)Global.random.Next(256), (byte)Global.random.Next(256));
+                        newPlayer = new Player(playerType, factionNames[Global.random.Next(factionNames.Length)], color);
+                    }
+
+                    players.Add(newPlayer);
+                    tiles[x, y] = new Tile(font, tileNames[Global.random.Next(tileNames.Length)], newPlayer, TILE_SIZE, new Vector2f(Tile.Size.X * x, Tile.Size.Y * y));
+                }
+            }
 
             var squadTypes = new List<SquadType>();
 

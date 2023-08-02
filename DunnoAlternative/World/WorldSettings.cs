@@ -11,8 +11,8 @@ namespace DunnoAlternative.World
         public int height; // 3 - 12 ?
         public int width;
 
-        public float percentWater;
-        public float percentPassive;
+        public float proportionWater;
+        public float proportionPassive;
 
         public bool cpuAdvancedStarts; // allow generating of cpu opponents with 3-5 ? connected territories instead if 1 and some additional heroes 
         public bool cpuHugeStarts; // same except with more territories?
