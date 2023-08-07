@@ -8,28 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Content\Namelists\FactionNamesTest.txt" />
-    <None Remove="Content\Namelists\HeroesTest.txt" />
-    <None Remove="Content\Namelists\TilesDefault.txt" />
-    <None Remove="Content\Namelists\TilesMountain.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Content\Namelists\FactionNamesTest.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Namelists\TilesDefault.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Namelists\TilesMountain.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Namelists\HeroesTest.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SFML.Net" Version="2.5.0" />
   </ItemGroup>
@@ -39,38 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Content\Fonts\KosugiMaru-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\HeroClasses\Rogue.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\HeroClasses\Warrior.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Particles\Blood.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\SquadTypes\Ninja.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\SquadTypes\Samurai.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Textures\Ninja.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Textures\Samurai.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\Textures\Terrain.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Content\Particles\" />
-    <Folder Include="Content\Textures\" />
+	  <Content Include="Content\**">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
 </Project>
